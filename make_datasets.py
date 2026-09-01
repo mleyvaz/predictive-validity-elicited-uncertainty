@@ -66,15 +66,27 @@ def main() -> None:
         for i in idx
     ])
 
-    # 2. SciQ -- science questions, single correct answer.
+    # 2. SciQ -- 2026-09-01: served as 4-option multiple choice (its own distractors), because
+    #    the free-form golds are cloze fragments ("thermal", "raises it") that exact match cannot
+    #    grade. Closed-label task with CLEAN labels; ChaosNLI is the closed-label task with
+    #    AMBIGUOUS labels. Options are shuffled with the fixed seed. Gold accepts the option text
+    #    or its letter. Recorded in the deviations log.
     sq = fetch("sciq")
     idx = rng.sample(range(len(sq)), min(N, len(sq)))
-    write("sciq", [
-        {"id": f"sq-{i:05d}",
-         "question": sq.iloc[i]["question"],
-         "answers": [sq.iloc[i]["correct_answer"]]}
-        for i in idx
-    ])
+    rows = []
+    for i in idx:
+        r = sq.iloc[i]
+        opts = [r["correct_answer"], r["distractor1"], r["distractor2"], r["distractor3"]]
+        rng.shuffle(opts)
+        letters = "ABCD"
+        k = opts.index(r["correct_answer"])
+        rows.append({
+            "id": f"sq-{i:05d}",
+            "question": (r["question"] + "\n" + "\n".join(f"{letters[j]}) {o}" for j, o in enumerate(opts))
+                         + "\nReply with the letter of the correct option only."),
+            "answers": [letters[k], r["correct_answer"], f"{letters[k]}) {r['correct_answer']}"],
+        })
+    write("sciq", rows)
 
     # 3. Natural Questions open -- short answers, harder, different distribution.
     nq = fetch("nqopen")

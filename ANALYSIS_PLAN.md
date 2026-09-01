@@ -107,6 +107,13 @@ the Limitations section of the paper. Deviations that favour the hypothesis are 
   1-sep) found I never exceeds 0.3 in closed classification; this tests whether that holds when
   ambiguity is real and measured. Direction of possible bias: none toward the hypothesis (the
   added analysis can only show I to be uninformative or informative about a target other than error).
+- **2026-09-01 — SciQ format (pilot finding).** In the 30-item gpt-4o-mini pilot, 69% of SciQ
+  answers were graded incorrect and inspection showed nearly all were grader artefacts: SciQ golds
+  are cloze fragments ("thermal", "raises it", "denominator") not recoverable by exact match
+  without the support passage. SciQ is therefore served as 4-option multiple choice using its own
+  distractors, shuffled with the fixed seed; gold accepts the letter or the option text. This turns
+  SciQ into a closed-label task with clean labels (ChaosNLI is the closed-label task with ambiguous
+  labels; TriviaQA and NQ-open remain free-form generation). Neutral with respect to H1-H5.
 - **2026-09-01 — Scale.** Pilot first (≤30 items/model, discarded). Full run at N = 300 per dataset
   (not 1000) for cost/time, all four models, four datasets. The calibration/test split stays
   50/50 with the same seed. Reduces power; a null on H1 at N=300 is weaker evidence than at

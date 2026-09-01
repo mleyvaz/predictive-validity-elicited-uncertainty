@@ -1,7 +1,12 @@
 # Paper 2 — Do elicited epistemic states predict error?
 
 **Target venue:** TMLR (rolling submission — no deadline to miss).
-**Status:** draft v0.1, no data collected.
+**Status (2026-09-01):** data collected in full (4 models x 4 datasets x N=300, preregistered; git tags
+`prereg-2026-09-01{,b,c}` before collection, `results-2026-09-01` after). Manuscript `main.tex` v0.3, 15 pp,
+negative result (H1 and H2 fail; H3 confirmed). Method review (Gemini) and veracity review (Codex) applied:
+`results/REVIEW_metodo_gemini.md`, `results/REVIEW_veracidad_codex.md`.
+**Open before submission:** co-author list; public repository URL in the Reproducibility statement;
+OSF registration of `ANALYSIS_PLAN.md`; anonymised build for TMLR double-blind review.
 
 ## What this paper decides
 

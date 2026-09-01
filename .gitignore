@@ -1,0 +1,5 @@
+results/raw_paper2.jsonl
+results/pilot_*.jsonl
+results/*.log
+data/_parquet/
+__pycache__/

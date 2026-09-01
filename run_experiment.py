@@ -225,6 +225,8 @@ def done_keys(out_path: Path):
             for line in fh:
                 try:
                     r = json.loads(line)
+                    if r.get("error"):          # 2026-09-01: API-error rows are re-collected on resume
+                        continue
                     seen.add((r["model"], r["dataset"], r["item_id"]))
                 except Exception:                      # noqa: BLE001
                     continue

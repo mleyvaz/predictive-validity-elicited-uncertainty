@@ -114,6 +114,14 @@ the Limitations section of the paper. Deviations that favour the hypothesis are 
   distractors, shuffled with the fixed seed; gold accepts the letter or the option text. This turns
   SciQ into a closed-label task with clean labels (ChaosNLI is the closed-label task with ambiguous
   labels; TriviaQA and NQ-open remain free-form generation). Neutral with respect to H1-H5.
+- **2026-09-01 — Label-semantics collision (pilot finding) → extra arm, post hoc.** On ChaosNLI the
+  arm-A prompt, applied verbatim, rates the *label's meaning* rather than the *choice's correctness*:
+  answer "contradiction" → (T≈0, F≈0.9), "neutral" → I≈0.5-0.7, "entailment" → T≈1, across
+  items. Arms A-C stay verbatim (they are the preregistered object). An additional arm
+  `tif_label` (P1-P3, prompts in `prompts.py::TIF_LABEL`, PROMPT_VERSION p2-v1.1) that names the
+  object of the rating explicitly is collected on the two closed-label datasets only and reported
+  as post hoc contrasts H1lab / H2lab / Hlab_vs_A. H1-H5 verdicts use arm A only. Direction of
+  bias: the extra arm can only help the triple; it is therefore excluded from the primary verdict.
 - **2026-09-01 — Scale.** Pilot first (≤30 items/model, discarded). Full run at N = 300 per dataset
   (not 1000) for cost/time, all four models, four datasets. The calibration/test split stays
   50/50 with the same seed. Reduces power; a null on H1 at N=300 is weaker evidence than at

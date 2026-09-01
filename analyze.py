@@ -80,6 +80,16 @@ def signals_for(df: pd.DataFrame, protocol: str) -> dict:
         "semantic_entropy":  pd.to_numeric(df["semantic_entropy"], errors="coerce"),
     }
     out["_TIF_components"] = np.column_stack([T, I, F])   # for the fitted arm
+
+    # Post hoc (2026-09-01): label-disambiguated triple on closed-label datasets, when present.
+    col = f"tif_label_{protocol}"
+    if col in df.columns and df[col].notna().any():
+        tl = df[col]
+        Tl = tl.map(lambda v: v[0] if isinstance(v, (list, tuple)) else np.nan).astype(float)
+        Il = tl.map(lambda v: v[1] if isinstance(v, (list, tuple)) else np.nan).astype(float)
+        Fl = tl.map(lambda v: v[2] if isinstance(v, (list, tuple)) else np.nan).astype(float)
+        out["s_TFlab"] = Fl - Tl
+        out["_TIFlab_components"] = np.column_stack([Tl, Il, Fl])
     return out
 
 
@@ -233,6 +243,18 @@ def analyse(raw_path: Path, n_boot: int = N_BOOT):
                 s_lr[fit_ok] = lr.predict_proba(comps[fit_ok])[:, 1]
             sig["s_TIF_lr"] = pd.Series(s_lr)
 
+            # Post hoc fitted label-disambiguated triple (closed-label datasets only)
+            comps_l = sig.pop("_TIFlab_components", None)
+            if comps_l is not None:
+                fit_ok_l = ~np.isnan(comps_l).any(axis=1)
+                s_lr_l = np.full(len(g), np.nan)
+                train_l = cal & fit_ok_l
+                if train_l.sum() >= 50 and len(np.unique(y[train_l])) == 2:
+                    lr_l = LogisticRegression(max_iter=1000)
+                    lr_l.fit(comps_l[train_l], y[train_l])
+                    s_lr_l[fit_ok_l] = lr_l.predict_proba(comps_l[fit_ok_l])[:, 1]
+                sig["s_TIFlab_lr"] = pd.Series(s_lr_l)
+
             test = ~cal
             for name, s in sig.items():
                 s = np.asarray(s, dtype=float)
@@ -279,6 +301,10 @@ def analyse(raw_path: Path, n_boot: int = N_BOOT):
                 ("H2", "s_TIF_lr", "s_TF"),
                 ("H3", "semantic_entropy", "s_TIF_lr"),
             ]
+            if "s_TIFlab_lr" in sig:
+                pairs += [("H1lab", "s_TIFlab_lr", "verbalized_scalar"),
+                          ("H2lab", "s_TIFlab_lr", "s_TFlab"),
+                          ("Hlab_vs_A", "s_TIFlab_lr", "s_TIF_lr")]
             for label, a, b in pairs:
                 pt, (lo, hi) = paired_bootstrap_diff(
                     y[test], np.asarray(sig[a], dtype=float)[test],

@@ -272,6 +272,20 @@ def _one_item(cl, model, ds_name, item):
             rec[f"{arm_name}_{proto}_raw"] = text
             rec[f"{arm_name}_{proto}"] = PARSERS[arm_name](text, proto)
 
+    # 2b. arm A-label (closed-label datasets only; added 2026-09-01, post hoc)
+    if ds_name in P.CLOSED_LABEL_DATASETS:
+        for proto in P.PROTOCOLS:
+            spec = P.TIF_LABEL[proto]
+            text, _ = call(
+                cl, model["id"], spec["system"],
+                spec["user"].format(question=item["question"], answer=ans),
+                temperature=0.0,
+                max_tokens=300 if proto == "P2" else 60,
+            )
+            n_calls += 1
+            rec[f"tif_label_{proto}_raw"] = text
+            rec[f"tif_label_{proto}"] = parse_tif(text, proto)
+
     # 5. arm E
     samples = []
     for _ in range(K_SAMPLES):

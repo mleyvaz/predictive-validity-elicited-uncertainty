@@ -126,3 +126,9 @@ the Limitations section of the paper. Deviations that favour the hypothesis are 
   (not 1000) for cost/time, all four models, four datasets. The calibration/test split stays
   50/50 with the same seed. Reduces power; a null on H1 at N=300 is weaker evidence than at
   N=1000 and will be stated as such. Recorded before collection.
+- **2026-09-01 (AFTER collection, 10:40) — SciQ-MC below the §9 error-rate floor.** Base error rate
+  0.037–0.067 by model (<5% in three of four). §9 says drop the dataset. Recorded after collection
+  because the rate is only known once greedy answers exist. Decision: keep the closed-label/clean
+  regime, flag its AUROC as unstable, and report pooled H1–H3 with and without it (H1 −0.010 vs
+  −0.003; H2 +0.003 vs −0.001; H3 +0.079 vs +0.107). No verdict changes. Direction of bias: none
+  (the triple does slightly worse with SciQ-MC included than without).

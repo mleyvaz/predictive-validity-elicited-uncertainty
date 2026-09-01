@@ -45,8 +45,8 @@ $23$ of $36$ cells. A post-hoc analysis on ChaosNLI shows that neither the elici
 sample-constructed indeterminacy tracks human label disagreement better than a scalar. We
 conclude that elicited three-component epistemic states do not carry predictive information
 beyond a single elicited number, and that arguments built on the triple as a measurement
-instrument lack predictive support. Prompts, raw generations, gradings and analysis code are
-released.
+instrument lack predictive support. Prompts, raw generations, gradings, the sealed analysis plan
+and analysis code accompany this submission.
 \end{abstract}
 
 \section{Introduction}
@@ -348,14 +348,20 @@ excludes zero in favour of the triple in $2$ of $48$ cells and against it in $6$
 is positive in exactly $50\%$ of cells. The retention rule (interval excluding zero under all
 three protocols, majority of cells) is not met under any protocol. By regime: TriviaQA
 $+0.005$, NQ-open $-0.041$ (four cells significantly against the triple), SciQ-MC $-0.033$,
-ChaosNLI $+0.028$ (one cell significantly in favour). \textbf{H1 fails.}
+ChaosNLI $+0.028$ (one cell significantly in favour). Excluding SciQ-MC, whose base error rate
+falls below the preregistered floor, the pooled difference is $-0.003$ over $36$ cells. The
+between-cell standard error of the pooled mean is $0.011$, so an average advantage of $0.03$
+AUROC --- a third of what semantic entropy delivers --- would have been detected. \textbf{H1 fails.}
 
 \paragraph{H2: the indeterminacy channel adds nothing.} The fitted triple versus
-$s_{\mathrm{TF}}$ differs by $-0.007$, $-0.003$ and $+0.019$ (P1--P3), with the interval
-excluding zero in $6$ of $48$ cells (four of them under P3, where the verbal-grade format inflates
-$I$ without improving discrimination; see below). Over all four regimes the mean difference is
-$+0.003$. \textbf{H2 fails:} whatever predictive information the triple carries is carried by $T$
-and $F$.
+$s_{\mathrm{TF}}$ differs by $-0.007$, $-0.003$ and $+0.019$ (P1--P3). Under P1 and P2 no cell
+favours the triple significantly; under P3 four of sixteen cells do, all on the closed-label
+datasets. Over all four regimes the mean difference is $+0.003$ (between-cell standard error
+$0.007$). The preregistered rule asks whether the interval includes zero: it does under P1 and P2,
+and the P3 gain is small and does not transfer to the primary contrast, which fails under P3 as
+well. \textbf{H2 fails.} We conjecture, without testing it here, that the verbal-grade format
+of P3 spreads $I$ over more of its range (Section~\ref{sec:posthoc}) and that the fitted
+combination exploits this on three- and four-label tasks; we report it rather than explain it.
 
 \paragraph{H3: sampling bounds elicitation.} Semantic entropy exceeds the fitted triple by
 $+0.096$, $+0.043$ and $+0.097$ (P1--P3), positive in $75\%$ of cells and significantly so in
@@ -474,8 +480,8 @@ cells. The elicited triple behaves as one degree of freedom dressed as three.
 \section{Discussion}
 \label{sec:discussion}
 
-The plan drafted two discussion branches before the data existed. The data selected the negative
-one; we reproduce it here with the additions the results warrant.
+The plan drafted two discussion branches before the data existed. The preregistered tests select
+the negative branch; we reproduce it here, and mark separately what rests on post-hoc evidence.
 
 \paragraph{Elicited triples do not predict error better than a single elicited number.} This
 held in free-form generation, in closed-label classification with clean labels, and in
@@ -485,12 +491,13 @@ under three elicitation formats. The reported prevalence of $T+I+F>1$ in earlier
 elicitation rather than a usable signal, and any downstream argument that builds on the elicited
 triple as a measurement instrument lacks predictive support.
 
-\paragraph{The indeterminacy channel is not a channel.} $I$ adds nothing to $T$ and $F$ for
-predicting error (H2), and it does not track human ambiguity better than a scalar confidence
-(Table~\ref{tab:human}). Formats that make models emit large $I$ (verbal grades) do so without
-adding information. Even a triple constructed from samples rather than asked for is the sample
-entropy under another name. The typed decomposition, in the forms tested here, has no empirical
-content beyond a scalar.
+\paragraph{The indeterminacy channel adds no predictive information.} This is the preregistered
+result H2: $I$ adds nothing to $T$ and $F$ for predicting error under P1 and P2, and a small
+protocol-specific gain under P3 ($+0.019$, four cells) that does not carry to the primary contrast.
+The post-hoc ChaosNLI analysis (Section~\ref{sec:posthoc}), which was registered before
+collection but is not part of the verdict, points the same way: $I$ does not track human ambiguity
+better than a scalar confidence, and a triple constructed from samples is the sample entropy under
+another name. We state the post-hoc part as consistent with H2, not as established by it.
 
 \paragraph{What elicitation is good for.} The verbal arms are not noise: they discriminate at
 $0.60$--$0.80$ and, in one model, the verbal channel tracks item ambiguity better than the model's
@@ -510,10 +517,13 @@ $I$ did not deliver.
 \section{Limitations and deviations}
 \label{sec:limits}
 
-$N=300$ per dataset rather than the planned $1{,}000$, for cost; a null at this size is weaker
-evidence than at the planned size, but the direction of the H1 and H2 estimates is stable across
-regimes and the intervals are narrow enough to exclude the effect sizes that would make the
-triple useful. Short-form and closed-label tasks only; results may not transfer to long-form
+$N=300$ per dataset rather than the planned $1{,}000$, for cost. Per cell ($150$ test items)
+the paired-bootstrap intervals on an AUROC difference have a mean half-width of $0.11$ (H1) and
+$0.04$ (H2), so single cells are underpowered for small effects; the study's power comes from
+pooling $48$ cells, where the standard errors of the mean differences are $0.011$ (H1) and
+$0.007$ (H2). A true average advantage of $0.03$ AUROC for the triple would have been detected;
+advantages below that are not excluded and would not, in our judgement, justify three numbers over
+one. Refusal and error rates per cell are given in Appendix~\ref{app:cells}. Short-form and closed-label tasks only; results may not transfer to long-form
 generation. Discrete semantic entropy over normalized strings is weaker than NLI-based
 clustering and is uninformative on closed-label tasks. Sequence log-probabilities were available
 for one model in full and one in part. Three protocols is a small sample from a large space; the
@@ -528,23 +538,43 @@ ChaosNLI added as a fourth dataset with a registered post-hoc analysis of $I$ ag
 entropy; (v) SciQ served as multiple choice after the pilot showed its free-form gold answers
 (cloze fragments) to be ungradable by exact match; (vi) a label-disambiguated triple added on the
 closed-label datasets after the pilot exposed the label-semantics collision, reported separately
-and excluded from the verdict; (vii) $N$ reduced to $300$. Deviations (iv) and (vi) could only
-have helped the triple. None was made after seeing test-split results.
+and excluded from the verdict; (vii) $N$ reduced to $300$; (viii) SciQ-MC retained although its
+base error rate ($0.037$--$0.067$ by model) fell below the $5\%$ floor at which the plan said a
+dataset should be dropped --- this is the one deviation recorded after collection, because the
+rate is only known once the greedy answers exist; we keep the regime, flag its AUROC estimates as
+unstable, and report the pooled contrasts with and without it (H1: $-0.010$ versus $-0.003$; H2:
+$+0.003$ versus $-0.001$; H3: $+0.079$ versus $+0.107$), which do not change any verdict.
+Deviations (iv) and (vi) were expected to favour the triple; (vi) did the opposite. None of
+(i)--(vii) was made after seeing test-split results.
+
+\section{Broader impact}
+The practical use of any of these signals is to decide when a system should abstain. A signal
+that looks richer than it is invites over-trust in exactly the settings --- medical, legal,
+financial --- where abstention matters most. Our result argues against deploying elicited
+multi-component states as abstention criteria on the strength of their form, and for the cheaper
+and better-supported alternatives (sampling, log-probabilities) where they are available. We see
+no direct risk from the release of prompts and generations; the datasets are public and contain
+no personal data.
 
 \section{Conclusion}
 Under a preregistered decision rule, on four models and four datasets spanning generation and
 classification, an elicited three-component epistemic state does not predict error better than a
-single verbalized confidence number, its indeterminacy component adds no information over truth
-and falsity, and sampling-based signals dominate all elicited ones on free-form generation. The
-triple, as elicited, is one degree of freedom with three names. Claims that rest on the elicited
-triple as a measurement of what a model knows should be read as claims about what the model says.
+single verbalized confidence number (H1), its indeterminacy component adds no predictive
+information over truth and falsity (H2), and sampling-based signals dominate all elicited ones on
+free-form generation (H3). The post-hoc evidence is consistent: as elicited, the triple behaves
+as one degree of freedom. Claims that rest on the elicited triple as a measurement of what a
+model knows should be read as claims about what the model says.
 
 \section*{Reproducibility statement}
 Prompts, raw generations ($4{,}800$ item-cells), gradings, per-item scores, the sealed analysis
-plan with its deviation log, and the analysis scripts are released at \TODO{repository URL}.
-The analysis plan was committed and tagged before collection (\texttt{prereg-2026-09-01},
-\texttt{prereg-2026-09-01b}, \texttt{prereg-2026-09-01c}); results are tagged
-\texttt{results-2026-09-01}.
+plan with its deviation log, and the analysis scripts are provided in the accompanying repository
+(\TODO{repository URL}). The plan and its pre-collection deviations were committed and tagged at
+09:03, 09:06 and 09:09 local time on 1~September~2026 (\texttt{prereg-2026-09-01},
+\texttt{-b}, \texttt{-c}); the debugging pilot ran between 09:04 and 09:09 and was discarded;
+full collection ran from 09:10 to 10:29; the analysis outputs were tagged at 10:36
+(\texttt{results-2026-09-01}). The git history with these timestamps is part of the release,
+and we acknowledge that a same-day timeline is a weaker guarantee than an external registry; an
+OSF registration of the plan file is \TODO{to be added before submission}.
 
 \appendix
 \section{Elicitation prompts}
@@ -613,7 +643,29 @@ THE CHOICE, not the meaning of the label itself}, with $T$/$I$/$F$ redefined as 
 which the chosen label is the correct classification / indeterminacy about which label is correct
 / the degree to which the chosen label is the wrong classification.
 
-\paragraph{Parsing.} Numeric triples are parsed by the regular expression
+\section{Per-cell refusal and error rates}
+\label{app:cells}
+Refusal rate (\%) and, among non-refused items, error rate, by model and dataset.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{4}{c}{Refusal (\%)} & \multicolumn{4}{c}{Error rate} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+Model & TriviaQA & NQ-open & SciQ-MC & ChaosNLI & TriviaQA & NQ-open & SciQ-MC & ChaosNLI \\
+\midrule
+Claude Haiku 4.5 & 5.0 & 18.3 & 0.3 & 0.0 & 0.186 & 0.645 & 0.040 & 0.233 \\
+Gemini 2.5 Flash & 2.0 & 13.3 & 2.0 & 0.0 & 0.153 & 0.531 & 0.037 & 0.277 \\
+gpt-4o-mini      & 3.3 & 18.0 & 0.7 & 0.0 & 0.203 & 0.610 & 0.047 & 0.280 \\
+Llama 3.1 8B     & 6.3 & 15.7 & 0.0 & 0.0 & 0.363 & 0.715 & 0.067 & 0.443 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Parsing}
+Numeric triples are parsed by the regular expression
 \texttt{T=<n> I=<n> F=<n>} (line breaks tolerated); verbal grades by exact match on the grid;
 unparseable output is recorded as missing, never imputed.
 

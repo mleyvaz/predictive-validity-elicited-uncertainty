@@ -8,10 +8,12 @@ Sellado: tags git `prereg-2026-09-01{,b,c}` antes de recoger. Desviaciones en `A
 
 | Dataset | Tipo | err real | H1 tripleta>escalar | H2 I añade | H3 entropía>tripleta | Nota |
 |---|---|---|---|---|---|---|
-| TriviaQA | generación | 0.15–0.36 | **falla** (Δ −0.01; excl. 0 en 3/24, 2 a favor del escalar) | **nula** (Δ −0.006) | sí (+0.16, 89 % celdas) | H5: escalar 0.51–0.68 > tripleta 0.33–0.56; entropía 0.75 |
-| NQ-open | generación | 0.53–0.72 | falla | nula | sí | log-probs 0.83 |
-| SciQ-MC | clasif. limpia | 0.04–0.07 | **falla** (Δ −0.03; 1/12) | nula | ≈ (Δ −0.006) | err <5 % en 3 modelos → AUROC inestable (§9); `tif_label` peor (Δ −0.13) |
-| ChaosNLI | clasif. ambigua | 0.23–0.44 | no se sostiene (Δ +0.07; 2/12) | **nula** (Δ +0.001) | no (Δ −0.015) | todo ≈ azar en la mitad ambigua |
+| TriviaQA | generación | 0.15–0.36 | **falla** (Δ +0.005; excl. 0 en 2/12) | **nula** (Δ +0.003; 0/12) | sí (+0.11; 5/12, positiva en 100 %) | H5: escalar 0.51–0.68 > tripleta 0.33–0.56; entropía 0.75 |
+| NQ-open | generación | 0.53–0.72 | **falla** (Δ −0.04; 4/12, la mayoría a favor del escalar) | nula (Δ −0.009) | **sí, 12/12** (+0.21) | log-probs 0.83 |
+| SciQ-MC | clasif. limpia | 0.04–0.07 | **falla** (Δ −0.03; 1/12) | nula (Δ +0.013) | ≈ (Δ −0.006) | err <5 % en 3 modelos → AUROC inestable (§9); `tif_label` peor (Δ −0.13) |
+| ChaosNLI | clasif. ambigua | 0.23–0.44 | no se sostiene (Δ +0.03; 1/12) | **nula** (Δ +0.004) | ≈ (Δ 0.000) | todo ≈ azar en la mitad ambigua |
+
+Agregado (48 celdas, 10 000 remuestreos): H1 Δ −0.010 (positiva en 50 %); H2 Δ +0.003 (48 %); H3 Δ +0.079 (75 %). Ninguna hipótesis a favor de la tripleta cumple la regla prerregistrada en ningún dataset.
 
 H4 (generación): η² señal 0.48 > protocolo 0.03 → ranking identificable.
 

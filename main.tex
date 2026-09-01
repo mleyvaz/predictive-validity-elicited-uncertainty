@@ -289,11 +289,11 @@ would say so. Both fail; the abstract says so.
 \section{Results}
 \label{sec:results}
 
-\paragraph{Data quality.} Parse rates for the elicited arms were at or above $0.90$ in
-$140$ of $144$ arm $\times$ cell combinations; the four exceptions ($P(\text{True})$ P3 on
-Claude/ChaosNLI $0.83$ and Llama/SciQ-MC $0.88$; scalar P2 on Claude/NQ-open $0.88$;
-label-disambiguated triple P3 on Llama/SciQ-MC $0.84$) are reported as format-fragile and not
-imputed. Base error rates were $0.225$ (TriviaQA), $0.625$ (NQ-open), $0.308$ (ChaosNLI) and
+\paragraph{Data quality.} Parse rates for the three preregistered elicited arms were at or
+above $0.90$ in $141$ of $144$ arm $\times$ cell combinations; the three exceptions
+($P(\text{True})$ P3 on Claude/ChaosNLI $0.83$ and Llama/SciQ-MC $0.88$; scalar P2 on
+Claude/NQ-open $0.88$), plus one cell of the post-hoc label-disambiguated arm (P3 on
+Llama/SciQ-MC, $0.84$), are reported as format-fragile and not imputed. Base error rates were $0.225$ (TriviaQA), $0.625$ (NQ-open), $0.308$ (ChaosNLI) and
 $0.048$ (SciQ-MC; per model $0.037$--$0.067$). SciQ-MC therefore falls below the $5\%$ floor
 fixed in the plan for three of four models: its AUROC estimates are unstable and we report them
 with that caveat rather than dropping the regime.
@@ -364,8 +364,8 @@ of P3 spreads $I$ over more of its range (Section~\ref{sec:posthoc}) and that th
 combination exploits this on three- and four-label tasks; we report it rather than explain it.
 
 \paragraph{H3: sampling bounds elicitation.} Semantic entropy exceeds the fitted triple by
-$+0.096$, $+0.043$ and $+0.097$ (P1--P3), positive in $75\%$ of cells and significantly so in
-$22$ of $48$. The advantage is concentrated in free-form generation (TriviaQA $+0.11$, NQ-open
+$+0.096$, $+0.043$ and $+0.097$ (P1--P3), positive in $75\%$ of cells; the interval excludes
+zero in favour of semantic entropy in $22$ of $48$ cells and against it in $3$. The advantage is concentrated in free-form generation (TriviaQA $+0.11$, NQ-open
 $+0.21$, significant in all $12$ NQ-open cells); on the closed-label datasets the two are
 indistinguishable (SciQ-MC $-0.006$, ChaosNLI $0.000$), where ten samples over three or four
 labels carry little information. Where available, sequence log-probability is the strongest
@@ -394,10 +394,12 @@ $\eta^2$ of AUROC is $0.28$ for dataset, $0.17$ for signal, $0.024$ for protocol
 model (Table~\ref{tab:variance}). The between-protocol component is an order of magnitude smaller
 than the between-signal component, so the ranking of elicited signals is identifiable and
 \textbf{H4 holds}. Protocol nevertheless shifts the elicited values substantially without
-changing their ranking: under P3 the share of items with $I\geq0.5$ rises from $0$--$4\%$
-(P1--P2) to $27$--$63\%$ on ChaosNLI, and the fitted triple's AUROC moves by up to $0.10$ within
-a model between protocols. The verbal-grade format makes models \emph{use} the indeterminacy
-channel without making it informative.
+changing their ranking. On ChaosNLI, the share of items with $I\geq0.5$ rises under P3 from
+$1$--$3\%$ (P1--P2) to $27$--$63\%$ for Claude and Gemini; gpt-4o-mini sits at $30$--$39\%$
+under every protocol because of the label collision described in Section~\ref{sec:posthoc},
+and Llama at $13\%$. The fitted triple's AUROC moves between protocols by up to $0.10$ within a
+model on ChaosNLI and by up to $0.22$ elsewhere (Gemini on NQ-open). The verbal-grade format
+makes models \emph{use} the indeterminacy channel without making it informative.
 
 \paragraph{H5: no coverage advantage at guaranteed risk.} At $\alpha=0.10$, in the $36$ cells
 where both signals admit a feasible threshold, achieved coverage of the fitted triple minus that
@@ -443,8 +445,9 @@ the entropy of 100 human labels --- a target other than error that an indetermin
 could plausibly track. Table~\ref{tab:human} reports Spearman correlations. The elicited $I$
 correlates with human entropy at $0.31$--$0.36$ for Claude (P1--P2), $0.06$--$0.21$ for Gemini,
 $0.07$--$0.10$ for Llama, and \emph{negatively} for gpt-4o-mini ($-0.18$ under P2--P3, the
-label collision again). In every model the scalar confidence tracks human entropy at least as
-well as $I$ (Claude $0.42$). A triple \emph{constructed} from the ten samples
+label collision again). Where either verbal signal tracks human entropy appreciably, the scalar does so at least as
+well as $I$ (Claude $0.42$ versus $0.36$; Gemini $0.20$ versus $0.21$); for Llama both are
+near zero ($\leq0.08$) and only sample entropy tracks it ($0.34$). A triple \emph{constructed} from the ten samples
 ($T_c$ = share supporting the answer, $F_c$ = share of the strongest rival, $I_c$ = residual
 share) does no better than the scalar entropy of the same samples: the partial correlation of
 $I_c$ or $F_c$ with human entropy given sample entropy is not distinguishable from zero in any
@@ -474,8 +477,9 @@ Llama 3.1 8B       & $0.07$ & $0.08$ & $0.01$ & $0.34$ & $0.30$ \\
 
 \paragraph{Effective dimensionality.} Under P1 and P2 the share of items with $I>T$ is
 $0$--$16\%$ in every cell except gpt-4o-mini on ChaosNLI ($41$--$47\%$, driven by the label
-collision), and the fitted triple's AUROC equals that of $F-T$ to the third decimal in most
-cells. The elicited triple behaves as one degree of freedom dressed as three.
+collision), and the fitted triple's AUROC is within $0.01$ of that of $F-T$ in $56\%$ of cells
+(median gap $0.006$). The elicited triple behaves, to a close approximation, as one degree of
+freedom dressed as three.
 
 \section{Discussion}
 \label{sec:discussion}

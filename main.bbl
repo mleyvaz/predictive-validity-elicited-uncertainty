@@ -124,8 +124,8 @@ Glenn Shafer.
 \newblock \emph{A Mathematical Theory of Evidence}.
 \newblock Princeton University Press, 1976.
 
-\bibitem[Shi et~al.(2026)Shi, Yue, Liu, and Chen]{shi2026notall}
-Yuxuan Shi, Zihan Yue, Yifan Liu, and Wei Chen.
+\bibitem[Shi et~al.(2026)Shi, Yue, Liu, Chen, and Dong]{shi2026notall}
+Jie Shi, Xiaodong Yue, Wei Liu, Yufei Chen, and Feifan Dong.
 \newblock Not all inconsistency is equal: Decomposing {LVLM} uncertainty into belief divergence and belief conflict.
 \newblock In \emph{Proceedings of the AAAI Conference on Artificial Intelligence}, volume~40, pages 25339--25347, 2026.
 \newblock \doi{10.1609/aaai.v40i30.39727}.

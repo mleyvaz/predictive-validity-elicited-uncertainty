@@ -1,0 +1,151 @@
+\begin{thebibliography}{24}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Ahdritz et~al.(2024)Ahdritz, Qin, Vyas, Barak, and Edelman]{ahdritz2024distinguishing}
+Gustaf Ahdritz, Tian Qin, Nikhil Vyas, Boaz Barak, and Benjamin~L. Edelman.
+\newblock Distinguishing the knowable from the unknowable with language models.
+\newblock \emph{arXiv preprint arXiv:2402.03563}, 2024.
+\newblock URL \url{https://arxiv.org/abs/2402.03563}.
+
+\bibitem[Angelopoulos and Bates(2021)]{angelopoulos2021gentle}
+Anastasios~N. Angelopoulos and Stephen Bates.
+\newblock A gentle introduction to conformal prediction and distribution-free uncertainty quantification.
+\newblock \emph{arXiv preprint arXiv:2107.07511}, 2021.
+\newblock URL \url{https://arxiv.org/abs/2107.07511}.
+
+\bibitem[Baan et~al.(2022)Baan, Aziz, Plank, and Fern{\'a}ndez]{baan2022stop}
+Joris Baan, Wilker Aziz, Barbara Plank, and Raquel Fern{\'a}ndez.
+\newblock Stop measuring calibration when humans disagree.
+\newblock In \emph{Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP)}, 2022.
+\newblock arXiv:2210.16133.
+
+\bibitem[Farquhar et~al.(2024)Farquhar, Kossen, Kuhn, and Gal]{farquhar2024detecting}
+Sebastian Farquhar, Jannik Kossen, Lorenz Kuhn, and Yarin Gal.
+\newblock Detecting hallucinations in large language models using semantic entropy.
+\newblock \emph{Nature}, 630:\penalty0 625--630, 2024.
+\newblock \doi{10.1038/s41586-024-07421-0}.
+
+\bibitem[Geifman and El-Yaniv(2017)]{geifman2017selective}
+Yonatan Geifman and Ran El-Yaniv.
+\newblock Selective classification for deep neural networks.
+\newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS)}, 2017.
+\newblock arXiv:1705.08500.
+
+\bibitem[J{\o}sang(2016)]{josang2016subjective}
+Audun J{\o}sang.
+\newblock \emph{Subjective Logic: A Formalism for Reasoning Under Uncertainty}.
+\newblock Springer, 2016.
+
+\bibitem[Joshi et~al.(2017)Joshi, Choi, Weld, and Zettlemoyer]{joshi2017triviaqa}
+Mandar Joshi, Eunsol Choi, Daniel~S. Weld, and Luke Zettlemoyer.
+\newblock {TriviaQA}: A large scale distantly supervised challenge dataset for reading comprehension.
+\newblock In \emph{Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (ACL)}, 2017.
+\newblock arXiv:1705.03551.
+
+\bibitem[Kadavath et~al.(2022)Kadavath, Conerly, Askell, et~al.]{kadavath2022know}
+Saurav Kadavath, Tom Conerly, Amanda Askell, et~al.
+\newblock Language models (mostly) know what they know.
+\newblock \emph{arXiv preprint arXiv:2207.05221}, 2022.
+\newblock URL \url{https://arxiv.org/abs/2207.05221}.
+
+\bibitem[Karimi et~al.(2026)Karimi, Meyappan, and Samavi]{acse2026}
+Hamed Karimi, Vaishali Meyappan, and Reza Samavi.
+\newblock {LLMs} uncertainty quantification via adaptive conformal semantic entropy.
+\newblock \emph{arXiv preprint arXiv:2605.04295}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2605.04295}.
+
+\bibitem[Kim and Kang(2026)]{protocolsens2026}
+Hankyeol Kim and Pilsung Kang.
+\newblock Same answer, different confidence: Protocol sensitivity in {LLM} confidence calibration.
+\newblock \emph{arXiv preprint arXiv:2605.27752}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2605.27752}.
+
+\bibitem[Kuhn et~al.(2023)Kuhn, Gal, and Farquhar]{kuhn2023semantic}
+Lorenz Kuhn, Yarin Gal, and Sebastian Farquhar.
+\newblock Semantic uncertainty: Linguistic invariances for uncertainty estimation in natural language generation.
+\newblock In \emph{International Conference on Learning Representations (ICLR)}, 2023.
+\newblock arXiv:2302.09664.
+
+\bibitem[Kwiatkowski et~al.(2019)Kwiatkowski, Palomaki, Redfield, et~al.]{kwiatkowski2019natural}
+Tom Kwiatkowski, Jennimaria Palomaki, Olivia Redfield, et~al.
+\newblock Natural questions: A benchmark for question answering research.
+\newblock \emph{Transactions of the Association for Computational Linguistics}, 7:\penalty0 453--466, 2019.
+\newblock \doi{10.1162/tacl_a_00276}.
+
+\bibitem[Lee et~al.(2019)Lee, Chang, and Toutanova]{lee2019latent}
+Kenton Lee, Ming-Wei Chang, and Kristina Toutanova.
+\newblock Latent retrieval for weakly supervised open domain question answering.
+\newblock In \emph{Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics (ACL)}, 2019.
+\newblock arXiv:1906.00300. Source of the NQ-open split.
+
+\bibitem[Leyva-V{\'a}zquez and Smarandache(2026)]{leyva2026breaking}
+Maikel~Yelandi Leyva-V{\'a}zquez and Florentin Smarandache.
+\newblock Breaking the chains of probability: Neutrosophic logic as a new framework for epistemic uncertainty in large language models.
+\newblock \emph{arXiv preprint arXiv:2605.24053}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2605.24053}.
+\newblock Also published in Neutrosophic Sets and Systems, vol. 99 (2026).
+
+\bibitem[Mason(2026)]{mason2026tensors}
+Tony Mason.
+\newblock From scalars to tensors: Declared losses recover epistemic distinctions that neutrosophic scalars cannot express.
+\newblock \emph{arXiv preprint arXiv:2604.09602}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2604.09602}.
+
+\bibitem[Mason and Anand(2026)]{mason2026observability}
+Tony Mason and Vaastav Anand.
+\newblock Epistemic observability in language models.
+\newblock \emph{arXiv preprint arXiv:2603.20531}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2603.20531}.
+
+\bibitem[Meng et~al.(2026)Meng, Zhang, Wang, et~al.]{know2guess2026}
+Renwei Meng, Bowen Zhang, Jian Wang, et~al.
+\newblock Know2guess: A contamination-aware multi-zone benchmark for knowledge-boundary evaluation in large language models.
+\newblock \emph{arXiv preprint arXiv:2606.26101}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2606.26101}.
+
+\bibitem[Miller(2024)]{miller2024adding}
+Evan Miller.
+\newblock Adding error bars to evals: A statistical approach to language model evaluations.
+\newblock \emph{arXiv preprint arXiv:2411.00640}, 2024.
+\newblock URL \url{https://arxiv.org/abs/2411.00640}.
+
+\bibitem[Nie et~al.(2020)Nie, Zhou, and Bansal]{nie2020chaosnli}
+Yixin Nie, Xiang Zhou, and Mohit Bansal.
+\newblock What can we learn from collective human opinions on natural language inference data?
+\newblock In \emph{Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)}, 2020.
+\newblock arXiv:2010.03532.
+
+\bibitem[Shafer(1976)]{shafer1976mathematical}
+Glenn Shafer.
+\newblock \emph{A Mathematical Theory of Evidence}.
+\newblock Princeton University Press, 1976.
+
+\bibitem[Shi et~al.(2026)Shi, Yue, Liu, and Chen]{shi2026notall}
+Yuxuan Shi, Zihan Yue, Yifan Liu, and Wei Chen.
+\newblock Not all inconsistency is equal: Decomposing {LVLM} uncertainty into belief divergence and belief conflict.
+\newblock In \emph{Proceedings of the AAAI Conference on Artificial Intelligence}, volume~40, pages 25339--25347, 2026.
+\newblock \doi{10.1609/aaai.v40i30.39727}.
+
+\bibitem[Tian et~al.(2023)Tian, Mitchell, Zhou, et~al.]{tian2023just}
+Katherine Tian, Eric Mitchell, Allan Zhou, et~al.
+\newblock Just ask for calibration: Strategies for eliciting calibrated confidence scores from language models fine-tuned with human feedback.
+\newblock In \emph{Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP)}, 2023.
+\newblock arXiv:2305.14975.
+
+\bibitem[Welbl et~al.(2017)Welbl, Liu, and Gardner]{welbl2017sciq}
+Johannes Welbl, Nelson~F. Liu, and Matt Gardner.
+\newblock Crowdsourcing multiple choice science questions.
+\newblock \emph{arXiv preprint arXiv:1707.06209}, 2017.
+\newblock URL \url{https://arxiv.org/abs/1707.06209}.
+
+\bibitem[Xiong et~al.(2024)Xiong, Hu, Lu, et~al.]{xiong2024can}
+Miao Xiong, Zhiyuan Hu, Xinyang Lu, et~al.
+\newblock Can {LLMs} express their uncertainty? an empirical evaluation of confidence elicitation in {LLMs}.
+\newblock In \emph{International Conference on Learning Representations (ICLR)}, 2024.
+\newblock arXiv:2306.13063.
+
+\end{thebibliography}

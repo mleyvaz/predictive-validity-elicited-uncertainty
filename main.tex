@@ -8,164 +8,173 @@
 \usepackage[hidelinks]{hyperref}
 
 \newcommand{\TODO}[1]{\textcolor{red}{[#1]}}
-\newcommand{\NUM}{\textcolor{gray}{\texttt{--.--}}}
 
 \title{Do Elicited Epistemic States Predict Error?\\
-A Predictive-Validity Test of Three-Component Uncertainty in Large Language Models}
+A Preregistered Predictive-Validity Test of Three-Component Verbalized Uncertainty in Large Language Models}
 
-\author{Maikel Leyva-V\'azquez\thanks{Universidad Bolivariana del Ecuador; Universidad Bernardo O'Higgins, Chile. ORCID 0000-0001-7911-5879.}
+\author{Maikel Leyva-V\'azquez\thanks{Universidad Bolivariana del Ecuador; Universidad de Guayaquil; Universidad Bernardo O'Higgins, Chile. ORCID 0000-0001-7911-5879.}
 \ \and \TODO{coauthors}}
 
-\date{Draft v0.1 --- \today}
+\date{Draft v0.2 --- \today}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Several formalisms propose representing a language model's epistemic state with more
-than one number: truth, indeterminacy and falsity as separate components. Prior work
-has shown that models will readily emit such triples, and that the components frequently
-sum to more than one. What has not been established is whether the elicited triple carries
-\emph{operationally useful} information. We state and test the question directly: holding
-the prediction target fixed at answer correctness, does an elicited $(T,I,F)$ triple predict
-error better than simpler signals obtained from the same model? We compare five signal
-families --- elicited $(T,I,F)$, verbalized scalar confidence, self-verification $P(\text{True})$,
-token-level sequence probability, and discrete semantic entropy --- under a single evaluation
-protocol, on \TODO{D} short-form question-answering datasets and \TODO{M} models. Because
-verbalized signals are known to be sensitive to how they are requested, every elicited arm is
-run under \TODO{E} distinct elicitation protocols and we report the range across protocols
-rather than a single point. We evaluate discrimination (AUROC, AUPRC), calibration
-(Brier, ECE), and the decision-relevant quantity: selective risk under a
-distribution-free conformal abstention rule at a fixed target risk level.
-The decision rule is fixed in advance and stated in Section~\ref{sec:prereg}: the triple is
-retained only if it beats verbalized scalar confidence by a margin whose confidence interval
-excludes zero, under every elicitation protocol. \TODO{One-sentence result once data are in.}
-All prompts, raw generations, and analysis code are released.
+Several formalisms propose representing a language model's epistemic state with more than one
+number: degrees of truth, indeterminacy and falsity as separate components that need not sum to
+one. Prior work has shown that models readily emit such triples and that the components
+frequently exceed unit mass. What has not been established is whether the elicited triple carries
+operationally useful information. We test this directly and under a preregistered decision rule:
+holding the prediction target fixed at answer correctness, does an elicited $(T,I,F)$ triple
+predict error better than simpler signals obtained from the same model? We compare five signal
+families --- the elicited triple, verbalized scalar confidence, self-verification
+$P(\text{True})$, sequence log-probability, and discrete semantic entropy --- on four models from
+four vendors and four datasets spanning free-form generation (TriviaQA, NQ-open), closed-label
+classification with clean labels (SciQ as four-option multiple choice) and closed-label
+classification with genuinely ambiguous items (ChaosNLI, 100 human labels per item). Every
+elicited arm is run under three elicitation protocols and reported as a range. The result is
+negative. Across 48 model $\times$ dataset $\times$ protocol cells, the best-case triple
+(a logistic combination fitted on a held-out calibration split) does not outperform a single
+verbalized confidence number (mean paired AUROC difference $-0.010$; the $95\%$ interval excludes
+zero in favour of the triple in $2$ cells and against it in $6$), and the indeterminacy component
+adds no information over truth and falsity alone (mean difference $+0.003$). Semantic entropy
+outperforms every elicited signal on free-form generation ($+0.11$ to $+0.21$ AUROC), and at a
+guaranteed selective risk of $0.10$ the triple yields lower achieved coverage than the scalar in
+$23$ of $36$ cells. A post-hoc analysis on ChaosNLI shows that neither the elicited nor a
+sample-constructed indeterminacy tracks human label disagreement better than a scalar. We
+conclude that elicited three-component epistemic states do not carry predictive information
+beyond a single elicited number, and that arguments built on the triple as a measurement
+instrument lack predictive support. Prompts, raw generations, gradings and analysis code are
+released.
 \end{abstract}
 
 \section{Introduction}
 \label{sec:intro}
 
 A language model asked a question it cannot answer has, in principle, several distinguishable
-predicaments. It may lack the information. The question may be vague. The question may be
-about a future contingency. The proposition may be paradoxical. A single scalar confidence
-score compresses all of these into one number, and a normalized output distribution forces
-whatever mass is withheld from one answer onto the others.
+predicaments. It may lack the information. The question may be vague. The question may be about
+a future contingency. The proposition may be paradoxical. A single scalar confidence score
+compresses all of these into one number, and a normalized output distribution forces whatever
+mass is withheld from one answer onto the others.
 
 This observation has motivated a family of proposals that represent the model's state with a
-triple rather than a scalar: degrees of truth, indeterminacy and falsity treated as separate
-and not required to sum to one \citep{leyva2026breaking}. Empirically it is established that
-models will emit such triples when asked, that the components frequently sum to more than one,
-and that the phenomenon replicates across vendors \citep{mason2026tensors}. It is also
-established, by the same replication, that the scalar triple is \emph{insufficient} to separate
-paradox from ignorance from contingency: distinct predicaments can produce identical triples.
+triple rather than a scalar: degrees of truth, indeterminacy and falsity treated as separate and
+not required to sum to one \citep{leyva2026breaking}. Empirically it is established that models
+will emit such triples when asked, that the components frequently sum to more than one, and that
+the phenomenon replicates across vendors \citep{mason2026tensors}. It is also established, by the
+same replication, that the scalar triple is \emph{insufficient} to separate paradox from
+ignorance from contingency: distinct predicaments can produce identical triples.
 
-None of this answers the question a practitioner would ask. Suppose we accept that the triple
-is a richer description. Does it \emph{do} anything? Concretely: if we want to know which of a
+None of this answers the question a practitioner would ask. Suppose we accept that the triple is
+a richer description. Does it \emph{do} anything? Concretely: if we want to know which of a
 model's answers will turn out to be wrong, does the triple tell us more than simply asking the
 model how confident it is?
 
-That is the question this paper tests. We fix the target --- $Y = 1$ if the model's answer is
+That is the question this paper tests. We fix the target --- $Y=1$ if the model's answer is
 incorrect --- and require every candidate signal to predict the same $Y$ on the same items with
 the same evaluation protocol. This turns a representational claim into a measurable one.
 
 \paragraph{Why the comparison must include verbalized scalar confidence.}
-The decisive baseline is not semantic entropy. It is asking the model for one number.
-If a three-component elicitation does not beat ``how confident are you, 0--100?'', then the
-additional components are contributing vocabulary rather than information, and the
-representational argument has no empirical support at the level of prediction. To our
-knowledge this comparison has not been run. We treat it as the primary contrast and
-every other signal as a reference point.
+The decisive baseline is not semantic entropy. It is asking the model for one number. If a
+three-component elicitation does not beat ``how confident are you, 0--100?'', then the additional
+components are contributing vocabulary rather than information, and the representational argument
+has no empirical support at the level of prediction. To our knowledge this comparison had not
+been run. We treat it as the primary contrast and every other signal as a reference point.
 
 \paragraph{Why protocol variation is part of the design, not a robustness check.}
-Verbalized confidence is strongly sensitive to elicitation format: recent work reports that
-verbalized confidence tracks prompt format rather than prediction quality, with systematic
-overconfidence and strong scale dependence \citep{protocolsens2026}. Any comparison between an
-elicited triple and an elicited scalar that uses one prompt per arm is confounded by prompt
-choice. We therefore run every elicited arm under $E$ protocols that vary wording, scale, and
-response format, and report the full range. If between-protocol variation for a given signal
-exceeds between-signal variation, that is the finding.
+Verbalized confidence is strongly sensitive to elicitation format
+\citep{tian2023just,xiong2024can,protocolsens2026}. Any comparison between an elicited triple and
+an elicited scalar that uses one prompt per arm is confounded by prompt choice. We therefore run
+every elicited arm under three protocols that vary wording, scale and response format, and report
+the full range.
 
 \paragraph{Contributions.}
 \begin{enumerate}
   \item A preregistered predictive-validity test of elicited three-component epistemic states
-        against four baselines under a single fixed target and evaluation protocol
-        (Sections~\ref{sec:method}--\ref{sec:prereg}).
+        against four baselines under a single fixed target and evaluation protocol, with the
+        analysis plan and all deviations sealed in a version-controlled repository before
+        collection (Sections~\ref{sec:method}--\ref{sec:prereg}).
   \item An explicit decisive contrast against verbalized scalar confidence, and an ablation
         isolating the contribution of the indeterminacy channel $I$ over $T$ and $F$ alone.
-  \item A protocol-sensitivity design in which each elicited signal is characterized by a range
-        over $E$ elicitation protocols rather than a point estimate.
+  \item Coverage of three task regimes --- free-form generation, closed-label classification
+        with clean labels, and closed-label classification with human-measured ambiguity ---
+        so that the indeterminacy component is tested against a target it could plausibly track.
   \item A decision-relevant evaluation: conformal abstention at a fixed target risk, reporting
         achieved coverage per signal, rather than discrimination metrics alone.
-  \item Public release of prompts, raw generations, gradings, and analysis code.
+  \item A negative result, stated as such: the triple does not beat a single number, and $I$
+        adds nothing, in every regime tested.
 \end{enumerate}
 
 \paragraph{What we are not claiming.} We do not test whether three-component representations
-are philosophically preferable, nor whether they describe internal states. We test one thing:
-whether the elicited numbers predict error. A negative result would not refute the
-representational argument; it would establish that the argument cannot currently be supported
-on predictive grounds, which is worth knowing and which we report either way.
+are philosophically preferable, nor whether they describe internal states
+\citep{mason2026observability}. We test one thing: whether the elicited numbers predict error.
+The negative result does not refute the representational argument; it establishes that the
+argument cannot currently be supported on predictive grounds.
 
 \section{Background and related work}
 \label{sec:related}
 
 \paragraph{Uncertainty quantification for LLMs.}
 The dominant sampling-based signal is semantic entropy, which samples multiple generations and
-measures dispersion over meaning-equivalence classes rather than surface strings. Self-verification
-approaches ask the model to judge its own candidate answer, yielding $P(\text{True})$.
-Sequence-level token probability remains a strong and cheap baseline where logprobs are exposed.
-Conformal prediction supplies distribution-free, finite-sample guarantees and is now routinely
-combined with these scores to produce accept/abstain rules \citep{acse2026}.
-Benchmarks in this area include long-form QA suites and unified libraries for UQ comparison.
+measures dispersion over meaning-equivalence classes rather than surface strings
+\citep{kuhn2023semantic,farquhar2024detecting}. Self-verification approaches ask the model to
+judge its own candidate answer, yielding $P(\text{True})$ \citep{kadavath2022know}.
+Sequence-level token probability remains a strong and cheap baseline where log-probabilities are
+exposed. Conformal prediction supplies distribution-free, finite-sample guarantees and is now
+routinely combined with these scores to produce accept/abstain rules
+\citep{angelopoulos2021gentle,acse2026}; selective prediction and the risk--coverage curve give
+the decision-relevant framing \citep{geifman2017selective}.
 
 \paragraph{Verbalized confidence and its fragility.}
-A parallel line asks the model to state its confidence in words or numbers. The consistent
-finding is that this channel is degenerate under many conditions: instruction-tuned models
-concentrate reported confidence in a narrow high band regardless of correctness, and the
-reported number is governed by response scale and prompt structure \citep{protocolsens2026}.
-Probes on hidden states and single-pass logit entropy discriminate correctness better than the
-verbal channel on the same items. This literature is the reason our design treats elicitation
-protocol as a factor.
+A parallel line asks the model to state its confidence in words or numbers. Verbalized confidence
+from RLHF-tuned models can be better calibrated than token probabilities in some settings
+\citep{tian2023just}, but it concentrates in a narrow high band regardless of correctness, and the
+reported number is governed by response scale and prompt structure
+\citep{xiong2024can,protocolsens2026}. Probes on hidden states discriminate correctness better
+than the verbal channel on the same items \citep{ahdritz2024distinguishing}. This literature is
+the reason our design treats elicitation protocol as a factor.
 
-\paragraph{Abstention and knowledge boundaries.}
-A growing benchmark family evaluates whether models decline to answer when they should
-\citep{know2guess2026}. These benchmarks establish that helpfulness-tuned models suppress
-refusal. They do not compare representations of the underlying epistemic state, which is the
-gap this paper addresses.
+\paragraph{Decomposed uncertainty.}
+A growing literature asks whether a model's uncertainty can be split into components ---
+epistemic versus aleatoric \citep{ahdritz2024distinguishing}, belief divergence versus belief
+conflict \citep{shi2026notall} --- and whether models decline to answer when they should
+\citep{know2guess2026}. The three-component triple tested here is one instantiation of this
+idea; the question of whether such a decomposition can be \emph{elicited} verbally, and whether it
+carries information beyond a scalar, is the gap this paper addresses.
 
 \paragraph{Multi-component uncertainty formalisms.}
 Representing belief with more than one number has several lineages: Dempster--Shafer belief
-functions, subjective logic, imprecise probability, and four-valued Belnap--Dunn logics, each
-with an established treatment of ignorance and conflict. Neutrosophic $(T,I,F)$ belongs to this
-family and is the specific instantiation tested here \citep{leyva2026breaking}. We take no
-position on the relations among these formalisms; we evaluate one of them empirically, and the
-protocol we describe applies unchanged to the others.
+functions \citep{shafer1976mathematical}, subjective logic \citep{josang2016subjective}, imprecise
+probability, and four-valued Belnap--Dunn logics, each with an established treatment of ignorance
+and conflict. Neutrosophic $(T,I,F)$ belongs to this family and is the specific instantiation
+tested here \citep{leyva2026breaking}. We take no position on the relations among these
+formalisms; we evaluate one of them empirically, and the protocol applies unchanged to the others.
 
 \paragraph{Positioning.} The closest prior work established that unconstrained elicitation
 produces $T+I+F>1$ at high rates and that this replicates across vendors
-\citep{leyva2026breaking,mason2026tensors}. Neither establishes predictive validity. That is the
-contribution here.
+\citep{leyva2026breaking,mason2026tensors}. Neither establishes predictive validity.
 
 \section{What would count as evidence}
 \label{sec:evidence}
 
 Let $x$ be a question, $\hat{a}(x)$ the model's answer under greedy decoding, and
-$Y(x) = \mathbb{1}[\hat{a}(x) \text{ is incorrect}]$ under a fixed grading function.
-A \emph{signal} is any map $s: x \mapsto \mathbb{R}$ intended to be monotone in the probability
-that $Y=1$. Every signal in this study predicts the same $Y$, on the same items, from the same
-model, and is evaluated with the same metrics on the same split.
+$Y(x)=\mathbb{1}[\hat{a}(x)\text{ is incorrect}]$ under a fixed grading function. A \emph{signal}
+is any map $s:x\mapsto\mathbb{R}$ intended to be monotone in the probability that $Y=1$. Every
+signal in this study predicts the same $Y$, on the same items, from the same model, and is
+evaluated with the same metrics on the same split.
 
 For a triple $(T,I,F)$ we define three scalarizations, fixed in advance:
 \begin{align}
 s_{\mathrm{TF}} &= F - T, \label{eq:stf}\\
 s_{\mathrm{TIF}} &= F + \tfrac{1}{2} I - T, \label{eq:stif}\\
-s_{\mathrm{TIF}}^{\mathrm{lr}} &= \text{fitted logistic combination of } (T,I,F) \text{ on the calibration split.} \label{eq:slr}
+s_{\mathrm{TIF}}^{\mathrm{lr}} &= \text{logistic combination of } (T,I,F) \text{ fitted on the calibration split.} \label{eq:slr}
 \end{align}
 Equation~\eqref{eq:stf} ignores $I$ entirely; \eqref{eq:stif} charges indeterminacy at a fixed
-rate; \eqref{eq:slr} lets the data choose the weights and is the most favourable treatment of
-the triple. The contrast $s_{\mathrm{TIF}}^{\mathrm{lr}}$ versus $s_{\mathrm{TF}}$ is the
-ablation that isolates whether $I$ carries information at all. Fitting \eqref{eq:slr} uses only
-the calibration split; all reported metrics are computed on the held-out test split.
+rate; \eqref{eq:slr} lets the data choose the weights and is the most favourable treatment of the
+triple. The contrast $s_{\mathrm{TIF}}^{\mathrm{lr}}$ versus $s_{\mathrm{TF}}$ isolates whether
+$I$ carries information at all. Fitting \eqref{eq:slr} uses only the calibration split; all
+reported metrics are computed on the held-out test split.
 
 \section{Method}
 \label{sec:method}
@@ -176,228 +185,437 @@ the calibration split; all reported metrics are computed on the held-out test sp
         with no normalization constraint, parsed to a triple. Scalarized by
         \eqref{eq:stf}--\eqref{eq:slr}.
   \item[B. Verbalized scalar confidence.] One additional call requesting a single integer
-        $0$--$100$. \emph{Primary baseline.}
+        $0$--$100$ (or a verbal grade under P3). \emph{Primary baseline.}
   \item[C. Self-verification $P(\text{True})$.] One additional call presenting the question and
-        the model's own answer and asking whether it is true; score is the model's stated
-        probability, or the token probability of ``True'' where logprobs are available.
-  \item[D. Sequence probability.] Mean token logprob of the greedy answer, where the provider
-        exposes logprobs. Reported as available; missing for closed models without logprob support.
-  \item[E. Discrete semantic entropy.] $K$ samples at temperature $1.0$, normalized and clustered
-        into meaning-equivalence classes by answer normalization (short-form QA), then Shannon
-        entropy over cluster frequencies. \TODO{If budget allows, add an NLI-based clustering variant
-        as a robustness arm and report both.}
+        the model's own answer and asking whether it is true (binary under P1--P2; a stated
+        probability under P3).
+  \item[D. Sequence log-probability.] Mean token log-probability of the greedy answer where the
+        provider exposes it: available for all items of gpt-4o-mini, $30\%$ of items of
+        Llama-3.1-8B (provider-dependent), and none for Claude or Gemini.
+  \item[E. Discrete semantic entropy.] $K=10$ samples at temperature $1.0$, normalized and
+        clustered into equivalence classes by answer normalization, then Shannon entropy over
+        cluster frequencies. On closed-label datasets the classes are the labels themselves.
 \end{description}
-
-Arms A, B and C are elicited and therefore run under all $E$ protocols. Arms D and E are
+Arms A, B and C are elicited and therefore run under all three protocols. Arms D and E are
 sampling-based and have no elicitation protocol.
 
 \subsection{Elicitation protocols}
-$E = 3$ protocols per elicited arm, varying three things simultaneously so that they are
-distinguishable formats rather than paraphrases:
-P1, terse numeric, no explanation requested;
-P2, explanation first then numbers (reasoning before the score);
-P3, alternative scale --- verbal labels mapped to a fixed numeric grid, presented in reverse
-order relative to P1. Full texts in Appendix~\ref{app:prompts}.
+Three protocols per elicited arm, varying wording, scale and response format simultaneously so
+that they are distinguishable formats rather than paraphrases: P1, terse numeric, no explanation;
+P2, explanation first, then numbers; P3, verbal grades (NONE $\ldots$ TOTAL) mapped to a fixed
+numeric grid, with the dimensions presented in reverse order relative to P1. Full texts in
+Appendix~\ref{app:prompts}.
 
 \subsection{Datasets}
-$D = 3$ short-form QA datasets with gold answers and answer aliases, chosen so that grading is
-mechanical and does not require a judge model: \TODO{name the three; suggested: TriviaQA
-(rc.nocontext validation), SciQ, and a Natural Questions open-domain subset}. Short-form is a
-deliberate restriction: it makes $Y$ well defined without an LLM grader, removing a confound
-that would otherwise contaminate every arm equally but unpredictably.
-$N = 1000$ items per dataset, sampled with a fixed seed, split $50/50$ into calibration and test.
+\label{sec:datasets}
+Four datasets, $N=300$ items each, sampled with seed 20260823 and split $50/50$ into calibration
+and test:
+\begin{description}
+  \item[TriviaQA] rc.nocontext validation \citep{joshi2017triviaqa}; free-form, rich alias sets.
+  \item[NQ-open] validation split \citep{kwiatkowski2019natural,lee2019latent}; free-form, harder.
+  \item[SciQ-MC] SciQ validation \citep{welbl2017sciq} served as four-option multiple choice
+        using the dataset's own distractors, options shuffled with the fixed seed, the model
+        answering with a letter. This is the closed-label regime with clean labels.
+  \item[ChaosNLI] SNLI and MNLI-matched items with 100 human labels each
+        \citep{nie2020chaosnli}; three labels; gold = majority label. Half of the sample is drawn
+        from the lowest-entropy third of the pool (clear items) and half from the highest-entropy
+        third (genuinely ambiguous items), so that the indeterminacy channel can be checked
+        against measured human disagreement. This is the closed-label regime with ambiguous labels.
+\end{description}
+Short-form and closed-label tasks are a deliberate restriction: they make $Y$ well defined
+without an LLM grader.
 
 \subsection{Models}
-$M = 4$ models spanning at least three vendors and two size classes.
-\TODO{Fix the list at run time and record exact version strings; do not report a model family
-without its version.}
+Four models from four vendors, accessed through OpenRouter on 1~September~2026 with
+temperature $0$ for greedy and elicited calls: \texttt{openai/gpt-4o-mini},
+\texttt{anthropic/claude-haiku-4.5}, \texttt{google/gemini-2.5-flash},
+\texttt{meta-llama/llama-3.1-8b-instruct}.
 
 \subsection{Grading}
-$Y$ is computed by normalized exact match against the gold answer set (lowercase, strip articles
-and punctuation, alias expansion). Items where the model refuses to answer are recorded
-separately and excluded from the discrimination analysis, with the refusal rate reported per
-model and protocol; a signal cannot be credited for predicting the error of an answer that was
-never given.
+$Y$ is computed by normalized exact match against the gold answer set (lower-case, strip articles
+and punctuation, alias expansion; letter or option text for SciQ-MC; label word for ChaosNLI).
+Items where the model refuses to answer (\texttt{I DON'T KNOW}) are recorded separately and
+excluded from the discrimination analysis: a signal cannot be credited for predicting the error of
+an answer that was never given. Refusal rates: TriviaQA $4.2\%$, NQ-open $16.3\%$, SciQ-MC
+$0.8\%$, ChaosNLI $0\%$; by model, $4.3$--$5.9\%$.
 
 \subsection{Cost}
-Per model and dataset: $N$ greedy answers, $N \times E \times 3$ elicitation calls (arms A, B, C),
-$N \times K$ samples for arm E. With $N=1000$, $E=3$, $K=10$, $D=3$, $M=4$ this is
-approximately \TODO{compute exactly from the run log} calls. Report the realized total and cost.
+The realized design comprised $4{,}800$ valid item-cells and approximately $106{,}000$ API
+invocations, of which about $2{,}700$ failed during a credit exhaustion in the first collection
+pass and were re-collected in full in a second pass (the pipeline is resumable and re-collects
+error rows; no partial records were used). Total spend was approximately US\$33.
 
 \section{Evaluation}
 \label{sec:eval}
 
-\paragraph{Discrimination.} AUROC and AUPRC for predicting $Y=1$.
-\paragraph{Calibration.} Brier score and expected calibration error, after mapping each signal to
-$[0,1]$ by isotonic regression fitted on the calibration split only.
-\paragraph{Selective prediction.} Risk--coverage curve and its area (AURC), plus accuracy at
-fixed coverage levels $\{0.9, 0.8, 0.5\}$.
-\paragraph{Conformal abstention.} For each signal, calibrate a threshold on the calibration split
-to achieve selective risk $\alpha \in \{0.05, 0.10\}$, then report \emph{achieved} risk and
-\emph{achieved} coverage on the test split. Coverage at a fixed guaranteed risk is the number a
-practitioner uses, and it is the headline comparison.
-\paragraph{Uncertainty.} Paired bootstrap over items, $B = 10{,}000$ resamples, for every
-pairwise difference between signals; report the difference and its $95\%$ interval, not two
-separate intervals.
-\paragraph{Protocol range.} For each elicited signal, report $\min$, $\max$ and range across the
-$E$ protocols, alongside a variance decomposition of the metric into between-signal,
-between-protocol, between-model and between-dataset components.
+\paragraph{Discrimination.} AUROC and AUPRC for predicting $Y=1$ on the test split.
+\paragraph{Calibration.} Brier score and expected calibration error after isotonic mapping fitted
+on the calibration split only.
+\paragraph{Selective prediction.} Risk--coverage curve, its area, and accuracy at coverage
+$\{0.9,0.8,0.5\}$ \citep{geifman2017selective}.
+\paragraph{Conformal abstention.} For each signal, a threshold calibrated on the calibration
+split to selective risk $\alpha\in\{0.05,0.10\}$; we report \emph{achieved} risk and
+\emph{achieved} coverage on the test split.
+\paragraph{Uncertainty.} Paired bootstrap over items, $B=10{,}000$, for every pairwise
+difference; we report the difference and its $95\%$ interval, never two marginal intervals
+\citep{miller2024adding}.
+\paragraph{Protocol range.} Each elicited signal is reported over the three protocols, with a
+variance decomposition of AUROC into signal, protocol, model and dataset components.
 
 \section{Preregistered hypotheses and decision rules}
 \label{sec:prereg}
 
-Fixed before data collection. Any deviation is reported in Section~\ref{sec:limits}.
+Fixed before data collection and sealed with git tags (\texttt{prereg-2026-09-01}, \texttt{-b},
+\texttt{-c}). Deviations are listed in Section~\ref{sec:limits}.
 
 \begin{description}
   \item[H1 (primary).] $s_{\mathrm{TIF}}^{\mathrm{lr}}$ achieves higher AUROC than verbalized
-        scalar confidence (arm B). \emph{Retain the triple only if} the paired bootstrap
-        $95\%$ interval for the difference excludes zero \emph{under all three protocols} and in
-        a majority of model $\times$ dataset cells.
+        scalar confidence. \emph{Retain the triple only if} the paired bootstrap $95\%$ interval
+        excludes zero under all three protocols and in a majority of model $\times$ dataset cells.
   \item[H2 (ablation).] $s_{\mathrm{TIF}}^{\mathrm{lr}}$ achieves higher AUROC than
-        $s_{\mathrm{TF}}$. If the interval includes zero, we conclude that the $I$ channel adds
-        no predictive information, whatever H1 shows.
-  \item[H3 (reference).] Semantic entropy (arm E) achieves higher AUROC than all elicited arms.
-        We expect this and it is not a failure of the triple; it bounds what elicitation can buy.
+        $s_{\mathrm{TF}}$. If the interval includes zero, the $I$ channel adds no predictive
+        information, whatever H1 shows.
+  \item[H3 (reference).] Semantic entropy achieves higher AUROC than all elicited arms.
   \item[H4 (protocol).] The between-protocol range of AUROC for a given elicited signal is
-        smaller than the between-signal difference at fixed protocol. If H4 fails, the ranking of
-        elicited signals is not identifiable from this design and we report it as such rather
-        than reporting a winner.
-  \item[H5 (decision).] At guaranteed selective risk $\alpha = 0.10$, the triple yields higher
-        achieved coverage than arm B.
+        smaller than the between-signal difference at fixed protocol.
+  \item[H5 (decision).] At guaranteed selective risk $\alpha=0.10$, the triple yields higher
+        achieved coverage than the scalar.
 \end{description}
 
 \paragraph{Reporting commitment.} All five hypotheses are reported with effect sizes and
-intervals regardless of direction. If H1 and H2 both fail, the paper's conclusion is that
-elicited three-component states do not carry predictive information beyond a single elicited
-number, and the title and abstract will say so.
+intervals regardless of direction. The plan stated that if H1 and H2 both fail, the abstract
+would say so. Both fail; the abstract says so.
 
 \section{Results}
 \label{sec:results}
 
-\TODO{All tables below are structural placeholders. No numbers are entered until
-\texttt{run\_experiment.py} and \texttt{analyze.py} have been executed on the full design.}
+\paragraph{Data quality.} Parse rates for the elicited arms were at or above $0.90$ in
+$140$ of $144$ arm $\times$ cell combinations; the four exceptions ($P(\text{True})$ P3 on
+Claude/ChaosNLI $0.83$ and Llama/SciQ-MC $0.88$; scalar P2 on Claude/NQ-open $0.88$;
+label-disambiguated triple P3 on Llama/SciQ-MC $0.84$) are reported as format-fragile and not
+imputed. Base error rates were $0.225$ (TriviaQA), $0.625$ (NQ-open), $0.308$ (ChaosNLI) and
+$0.048$ (SciQ-MC; per model $0.037$--$0.067$). SciQ-MC therefore falls below the $5\%$ floor
+fixed in the plan for three of four models: its AUROC estimates are unstable and we report them
+with that caveat rather than dropping the regime.
 
-\begin{table}[h]
+\begin{table}[t]
 \centering
-\caption{Main discrimination results, pooled over datasets. AUROC for predicting incorrectness,
-with paired-bootstrap $95\%$ intervals. Elicited arms report the range over $E=3$ protocols.}
+\caption{Discrimination, pooled over the 16 model $\times$ dataset cells. Mean test-split AUROC
+for predicting incorrectness, with the range over cells in brackets. Elicited arms are shown per
+protocol; sampling arms have no protocol. Sequence log-probability is available in 8 cells only.}
 \label{tab:main}
+\small
 \begin{tabular}{llccc}
 \toprule
-Arm & Signal & AUROC (P1) & AUROC (P2) & AUROC (P3) \\
+Arm & Signal & P1 & P2 & P3 \\
 \midrule
-A & $s_{\mathrm{TIF}}^{\mathrm{lr}}$ & \NUM & \NUM & \NUM \\
-A & $s_{\mathrm{TIF}}$ (fixed weights) & \NUM & \NUM & \NUM \\
-A & $s_{\mathrm{TF}}$ (no $I$) & \NUM & \NUM & \NUM \\
-B & Verbalized scalar confidence & \NUM & \NUM & \NUM \\
-C & $P(\text{True})$ & \NUM & \NUM & \NUM \\
-D & Sequence logprob & \multicolumn{3}{c}{\NUM} \\
-E & Discrete semantic entropy & \multicolumn{3}{c}{\NUM} \\
+A & $s_{\mathrm{TIF}}^{\mathrm{lr}}$ (fitted) & 0.646 [0.39, 0.85] & 0.700 [0.54, 0.90] & 0.646 [0.52, 0.89] \\
+A & $s_{\mathrm{TIF}}$ (fixed weights)        & 0.653 [0.52, 0.79] & 0.697 [0.51, 0.90] & 0.642 [0.50, 0.88] \\
+A & $s_{\mathrm{TF}}$ (no $I$)                & 0.654 [0.52, 0.79] & 0.703 [0.51, 0.90] & 0.627 [0.49, 0.87] \\
+B & Verbalized scalar confidence              & 0.657 [0.45, 0.89] & 0.710 [0.50, 0.87] & 0.658 [0.50, 0.89] \\
+C & $P(\text{True})$                          & 0.614 [0.51, 0.80] & 0.603 [0.51, 0.72] & 0.652 [0.44, 0.87] \\
+D & Sequence log-probability (8 cells)        & \multicolumn{3}{c}{0.796 [0.56, 0.93]} \\
+E & Discrete semantic entropy                 & \multicolumn{3}{c}{0.744 [0.56, 0.93]} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[t]
 \centering
-\caption{Primary contrast (H1) and ablation (H2): paired differences in AUROC with $95\%$
-bootstrap intervals, per protocol.}
+\caption{Mean test-split AUROC by task regime (elicited arms averaged over protocols and models;
+sampling arms over models). SciQ-MC has a base error rate below the preregistered $5\%$ floor.}
+\label{tab:bydataset}
+\small
+\begin{tabular}{lcccc}
+\toprule
+Signal & TriviaQA & NQ-open & SciQ-MC$^{\dagger}$ & ChaosNLI \\
+ & (generation) & (generation) & (clean labels) & (ambiguous labels) \\
+\midrule
+$s_{\mathrm{TIF}}^{\mathrm{lr}}$   & 0.711 & 0.589 & 0.764 & 0.592 \\
+$s_{\mathrm{TF}}$                  & 0.708 & 0.598 & 0.750 & 0.588 \\
+Verbalized scalar                  & 0.707 & 0.630 & 0.800 & 0.564 \\
+$P(\text{True})$                   & 0.641 & 0.606 & 0.682 & 0.563 \\
+Sequence log-probability           & 0.869 & 0.829 & 0.855 & 0.632 \\
+Semantic entropy                   & 0.825 & 0.802 & 0.758 & 0.591 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{H1: the triple does not beat one number.} Table~\ref{tab:contrast} gives the
+preregistered contrasts. The mean paired difference in AUROC between the fitted triple and the
+verbalized scalar is $-0.011$, $-0.011$ and $-0.010$ under P1, P2 and P3. The $95\%$ interval
+excludes zero in favour of the triple in $2$ of $48$ cells and against it in $6$; the difference
+is positive in exactly $50\%$ of cells. The retention rule (interval excluding zero under all
+three protocols, majority of cells) is not met under any protocol. By regime: TriviaQA
+$+0.005$, NQ-open $-0.041$ (four cells significantly against the triple), SciQ-MC $-0.033$,
+ChaosNLI $+0.028$ (one cell significantly in favour). \textbf{H1 fails.}
+
+\paragraph{H2: the indeterminacy channel adds nothing.} The fitted triple versus
+$s_{\mathrm{TF}}$ differs by $-0.007$, $-0.003$ and $+0.019$ (P1--P3), with the interval
+excluding zero in $6$ of $48$ cells (four of them under P3, where the verbal-grade format inflates
+$I$ without improving discrimination; see below). Over all four regimes the mean difference is
+$+0.003$. \textbf{H2 fails:} whatever predictive information the triple carries is carried by $T$
+and $F$.
+
+\paragraph{H3: sampling bounds elicitation.} Semantic entropy exceeds the fitted triple by
+$+0.096$, $+0.043$ and $+0.097$ (P1--P3), positive in $75\%$ of cells and significantly so in
+$22$ of $48$. The advantage is concentrated in free-form generation (TriviaQA $+0.11$, NQ-open
+$+0.21$, significant in all $12$ NQ-open cells); on the closed-label datasets the two are
+indistinguishable (SciQ-MC $-0.006$, ChaosNLI $0.000$), where ten samples over three or four
+labels carry little information. Where available, sequence log-probability is the strongest
+signal of all ($0.80$ pooled; $0.83$--$0.87$ on generation).
+
+\begin{table}[t]
+\centering
+\caption{Preregistered contrasts: paired differences in test-split AUROC, mean over the 16
+cells per protocol, with the number of cells whose $95\%$ paired-bootstrap interval excludes zero
+in favour of the first signal ($+$) or against it ($-$).}
 \label{tab:contrast}
-\begin{tabular}{lccc}
+\small
+\begin{tabular}{llccc}
 \toprule
-Contrast & P1 & P2 & P3 \\
+ & Contrast & P1 & P2 & P3 \\
 \midrule
-$s_{\mathrm{TIF}}^{\mathrm{lr}} - $ verbalized scalar (H1) & \NUM & \NUM & \NUM \\
-$s_{\mathrm{TIF}}^{\mathrm{lr}} - s_{\mathrm{TF}}$ (H2) & \NUM & \NUM & \NUM \\
+H1 & $s_{\mathrm{TIF}}^{\mathrm{lr}} -$ verbalized scalar & $-0.011$ ($+1/-4$) & $-0.011$ ($+0/-1$) & $-0.010$ ($+1/-1$) \\
+H2 & $s_{\mathrm{TIF}}^{\mathrm{lr}} - s_{\mathrm{TF}}$    & $-0.007$ ($+0/-2$) & $-0.003$ ($+0/-0$) & $+0.019$ ($+4/-0$) \\
+H3 & semantic entropy $- s_{\mathrm{TIF}}^{\mathrm{lr}}$    & $+0.096$ ($+10/-0$) & $+0.043$ ($+6/-2$) & $+0.097$ ($+6/-1$) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
-\centering
-\caption{Decision-relevant comparison (H5): achieved coverage at guaranteed selective risk
-$\alpha=0.10$ on the test split.}
-\label{tab:conformal}
-\begin{tabular}{lccc}
-\toprule
-Signal & Achieved risk & Achieved coverage & Coverage $95\%$ CI \\
-\midrule
-$s_{\mathrm{TIF}}^{\mathrm{lr}}$ & \NUM & \NUM & \NUM \\
-Verbalized scalar & \NUM & \NUM & \NUM \\
-$P(\text{True})$ & \NUM & \NUM & \NUM \\
-Semantic entropy & \NUM & \NUM & \NUM \\
-\bottomrule
-\end{tabular}
-\end{table}
+\paragraph{H4: protocol does not dominate signal, but it moves the numbers.} The marginal
+$\eta^2$ of AUROC is $0.28$ for dataset, $0.17$ for signal, $0.024$ for protocol and $0.011$ for
+model (Table~\ref{tab:variance}). The between-protocol component is an order of magnitude smaller
+than the between-signal component, so the ranking of elicited signals is identifiable and
+\textbf{H4 holds}. Protocol nevertheless shifts the elicited values substantially without
+changing their ranking: under P3 the share of items with $I\geq0.5$ rises from $0$--$4\%$
+(P1--P2) to $27$--$63\%$ on ChaosNLI, and the fitted triple's AUROC moves by up to $0.10$ within
+a model between protocols. The verbal-grade format makes models \emph{use} the indeterminacy
+channel without making it informative.
 
-\begin{table}[h]
+\paragraph{H5: no coverage advantage at guaranteed risk.} At $\alpha=0.10$, in the $36$ cells
+where both signals admit a feasible threshold, achieved coverage of the fitted triple minus that
+of the scalar averages $-0.026$ ($+0.013$ under P2, $-0.020$ under P1, $-0.071$ under P3); the
+triple covers more in $8$ cells, less in $23$, and the same in $5$. \textbf{H5 fails.} Two
+caveats apply to both signals equally: with $150$ calibration items the achieved test risk exceeds
+the nominal $0.10$ in about half of the cells ($47\%$ for the triple, $56\%$ for the scalar), and
+semantic entropy gains $+0.11$ coverage over the scalar on the same cells ($18$ up, $12$ down).
+
+\begin{table}[t]
 \centering
-\caption{Variance decomposition of AUROC (H4): share attributable to each design factor.}
+\caption{Variance decomposition of test-split AUROC (H4): marginal $\eta^2$ by design factor,
+over all signals, protocols, models and datasets. Components are marginal and need not sum to one.}
 \label{tab:variance}
-\begin{tabular}{lc}
+\small
+\begin{tabular}{lcc}
 \toprule
-Component & Share of variance \\
+Component & Marginal $\eta^2$ & Levels \\
 \midrule
-Between signals & \NUM \\
-Between elicitation protocols & \NUM \\
-Between models & \NUM \\
-Between datasets & \NUM \\
-Residual & \NUM \\
+Between datasets              & 0.281 & 4 \\
+Between signals               & 0.168 & 9 \\
+Between elicitation protocols & 0.024 & 3 \\
+Between models                & 0.011 & 4 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Post-hoc analyses (registered before collection, not part of the verdict)}
+\label{sec:posthoc}
+
+\paragraph{Label-semantics collision.} In the pilot, applying the arm-A prompt to ChaosNLI
+produced triples that rated the \emph{meaning of the label} rather than the correctness of the
+choice: an answer of ``contradiction'' yielded $(T\approx0, F\approx0.9)$, ``neutral'' yielded
+$I\approx0.5$--$0.7$, and ``entailment'' yielded $T\approx1$, item after item. We kept the
+preregistered prompt and added, on the two closed-label datasets only, a variant that names the
+object of the rating explicitly (``rate the correctness of the choice, not the meaning of the
+label''). The disambiguated triple is \emph{worse}: against the scalar, $-0.102$, $-0.023$ and
+$-0.083$ (P1--P3); against the original triple, $-0.107$, $-0.016$ and $-0.066$. Telling the
+model what to rate does not remove the collision and removes what little signal the format had.
+
+\paragraph{Does any indeterminacy track human disagreement?} ChaosNLI provides, for each item,
+the entropy of 100 human labels --- a target other than error that an indeterminacy component
+could plausibly track. Table~\ref{tab:human} reports Spearman correlations. The elicited $I$
+correlates with human entropy at $0.31$--$0.36$ for Claude (P1--P2), $0.06$--$0.21$ for Gemini,
+$0.07$--$0.10$ for Llama, and \emph{negatively} for gpt-4o-mini ($-0.18$ under P2--P3, the
+label collision again). In every model the scalar confidence tracks human entropy at least as
+well as $I$ (Claude $0.42$). A triple \emph{constructed} from the ten samples
+($T_c$ = share supporting the answer, $F_c$ = share of the strongest rival, $I_c$ = residual
+share) does no better than the scalar entropy of the same samples: the partial correlation of
+$I_c$ or $F_c$ with human entropy given sample entropy is not distinguishable from zero in any
+model ($p\geq0.07$). Finally, the models' sample distributions diverge from the human
+distributions precisely on the ambiguous half (Jensen--Shannon $0.26$--$0.32$ versus
+$0.10$--$0.13$ on clear items; Llama reversed): the models collapse onto one label where
+annotators split \citep{baan2022stop}.
+
+\begin{table}[t]
+\centering
+\caption{ChaosNLI: Spearman correlation with human label entropy ($n=300$ per model).
+$I$ = elicited indeterminacy (arm A, P1/P2); scalar = $1-$ verbalized confidence (P1);
+$H_c$ = entropy of ten samples; $I_c$ = constructed residual share.}
+\label{tab:human}
+\small
+\begin{tabular}{lccccc}
+\toprule
+Model & $I$ (P1) & $I$ (P2) & $1-$scalar (P1) & $H_c$ & $I_c$ \\
+\midrule
+Claude Haiku 4.5   & $0.31$ & $0.36$ & $0.42$ & $0.18$ & --- \\
+Gemini 2.5 Flash   & $0.06$ & $0.21$ & $0.20$ & $0.27$ & $0.08$ \\
+gpt-4o-mini        & $-0.01$ & $-0.18$ & $-0.01$ & $0.22$ & $0.04$ \\
+Llama 3.1 8B       & $0.07$ & $0.08$ & $0.01$ & $0.34$ & $0.30$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Effective dimensionality.} Under P1 and P2 the share of items with $I>T$ is
+$0$--$16\%$ in every cell except gpt-4o-mini on ChaosNLI ($41$--$47\%$, driven by the label
+collision), and the fitted triple's AUROC equals that of $F-T$ to the third decimal in most
+cells. The elicited triple behaves as one degree of freedom dressed as three.
 
 \section{Discussion}
 \label{sec:discussion}
 
-\TODO{Write the branch that the data select. Both branches are drafted below so that the
-conclusion is not chosen after seeing the numbers.}
+The plan drafted two discussion branches before the data existed. The data selected the negative
+one; we reproduce it here with the additions the results warrant.
 
-\paragraph{If H1 and H2 hold.} Elicited three-component states carry predictive information
-beyond a single elicited number, and the indeterminacy channel is doing work. The claim then
-available is narrow and defensible: for short-form QA, asking a model to separate its
-uncertainty into components yields a usable error predictor that outperforms asking for one
-number, at a cost of one additional call. This does not establish that the components correspond
-to internal states, and we do not claim it.
+\paragraph{Elicited triples do not predict error better than a single elicited number.} This
+held in free-form generation, in closed-label classification with clean labels, and in
+closed-label classification with genuinely ambiguous items, on four models from four vendors,
+under three elicitation formats. The reported prevalence of $T+I+F>1$ in earlier work
+\citep{leyva2026breaking,mason2026tensors} therefore describes a property of unconstrained
+elicitation rather than a usable signal, and any downstream argument that builds on the elicited
+triple as a measurement instrument lacks predictive support.
 
-\paragraph{If H1 holds but H2 fails.} The triple beats scalar confidence, but the gain comes from
-$T$ and $F$ rather than from $I$. The honest reading is that asking for two opposing quantities
-is a better elicitation format than asking for one, which is a prompting result, not a
-representational one.
+\paragraph{The indeterminacy channel is not a channel.} $I$ adds nothing to $T$ and $F$ for
+predicting error (H2), and it does not track human ambiguity better than a scalar confidence
+(Table~\ref{tab:human}). Formats that make models emit large $I$ (verbal grades) do so without
+adding information. Even a triple constructed from samples rather than asked for is the sample
+entropy under another name. The typed decomposition, in the forms tested here, has no empirical
+content beyond a scalar.
 
-\paragraph{If H1 fails.} Elicited triples do not predict error better than a single elicited
-number. The reported prevalence of $T+I+F>1$ then describes a property of unconstrained
-elicitation rather than a usable signal, and any downstream argument that builds on the triple
-as a measurement instrument lacks predictive support. We would state this in the abstract.
+\paragraph{What elicitation is good for.} The verbal arms are not noise: they discriminate at
+$0.60$--$0.80$ and, in one model, the verbal channel tracks item ambiguity better than the model's
+own sampling ($0.42$ versus $0.18$). But the scalar does this as well as the triple. Verbalized
+reports remain a legitimate object of study as \emph{behaviour} --- what a model says under a
+protocol --- and a poor instrument for what it knows, consistent with the observability argument
+of \citet{mason2026observability}.
 
-\paragraph{If H4 fails.} Protocol dominates signal. The practical recommendation would be that
-comparisons between elicited uncertainty representations are not identifiable without protocol
-randomization, and that published comparisons using a single prompt per arm should be read as
-reporting a prompt effect.
+\paragraph{Where a multi-component representation might still earn its place.} Not in
+self-report. Three routes remain open and are not tested here: components read from internal
+representations rather than asked for; components assigned by an analyst aggregating several
+models or sources, where independence of support and conflict is a modelling choice rather than a
+claim about introspection; and targets that are themselves typed, provided the type labels come
+from outside the model. The last route is the one ChaosNLI approximates, and on it the elicited
+$I$ did not deliver.
 
-\section{Limitations}
+\section{Limitations and deviations}
 \label{sec:limits}
 
-Short-form QA only; results may not transfer to long-form generation, where grading itself is
-uncertain. Discrete semantic entropy over normalized strings is a weaker instrument than
-NLI-based clustering. Sequence logprobs are unavailable for some providers, so arm D is not
-complete across models. Elicitation is behavioural: nothing here licenses claims about internal
-representations. $E=3$ protocols is a small sample from a large space; the protocol range is a
-lower bound on protocol sensitivity, not an estimate of it. \TODO{Record every deviation from
-Section~\ref{sec:prereg} here, including any that favour the hypothesis.}
+$N=300$ per dataset rather than the planned $1{,}000$, for cost; a null at this size is weaker
+evidence than at the planned size, but the direction of the H1 and H2 estimates is stable across
+regimes and the intervals are narrow enough to exclude the effect sizes that would make the
+triple useful. Short-form and closed-label tasks only; results may not transfer to long-form
+generation. Discrete semantic entropy over normalized strings is weaker than NLI-based
+clustering and is uninformative on closed-label tasks. Sequence log-probabilities were available
+for one model in full and one in part. Three protocols is a small sample from a large space; the
+protocol range is a lower bound on protocol sensitivity. Elicitation is behavioural: nothing here
+licenses claims about internal representations. SciQ-MC's base error rate fell below the
+preregistered $5\%$ floor.
+
+Deviations from the sealed plan, all recorded before collection: (i) dataset loader rewritten to
+read parquet files directly; (ii) \texttt{gemini-2.0-flash-001} replaced by
+\texttt{gemini-2.5-flash} (no longer served); (iii) items collected in parallel threads; (iv)
+ChaosNLI added as a fourth dataset with a registered post-hoc analysis of $I$ against human
+entropy; (v) SciQ served as multiple choice after the pilot showed its free-form gold answers
+(cloze fragments) to be ungradable by exact match; (vi) a label-disambiguated triple added on the
+closed-label datasets after the pilot exposed the label-semantics collision, reported separately
+and excluded from the verdict; (vii) $N$ reduced to $300$. Deviations (iv) and (vi) could only
+have helped the triple. None was made after seeing test-split results.
 
 \section{Conclusion}
-\TODO{One paragraph, written after the analysis, stating which hypotheses survived.}
+Under a preregistered decision rule, on four models and four datasets spanning generation and
+classification, an elicited three-component epistemic state does not predict error better than a
+single verbalized confidence number, its indeterminacy component adds no information over truth
+and falsity, and sampling-based signals dominate all elicited ones on free-form generation. The
+triple, as elicited, is one degree of freedom with three names. Claims that rest on the elicited
+triple as a measurement of what a model knows should be read as claims about what the model says.
 
 \section*{Reproducibility statement}
-Prompts, raw generations, gradings, per-item scores, and analysis scripts are released at
-\TODO{repository URL}. The analysis plan in Section~\ref{sec:prereg} was fixed and timestamped
-before data collection; the timestamped file is included in the repository.
+Prompts, raw generations ($4{,}800$ item-cells), gradings, per-item scores, the sealed analysis
+plan with its deviation log, and the analysis scripts are released at \TODO{repository URL}.
+The analysis plan was committed and tagged before collection (\texttt{prereg-2026-09-01},
+\texttt{prereg-2026-09-01b}, \texttt{prereg-2026-09-01c}); results are tagged
+\texttt{results-2026-09-01}.
 
 \appendix
 \section{Elicitation prompts}
 \label{app:prompts}
-\TODO{Paste the exact three protocol texts from \texttt{prompts.py} verbatim, including system
-messages and parsing regexes.}
+All prompts are reproduced verbatim from \texttt{prompts.py} (version \texttt{p2-v1.1}).
+Placeholders \texttt{\{question\}} and \texttt{\{answer\}} are filled with the item and the
+model's greedy answer.
+
+\paragraph{Answer call (all arms).} System: \emph{You are answering short factual questions.
+Reply with the answer only: no preamble, no explanation, no punctuation beyond what the answer
+needs. If you do not know, reply exactly: I DON'T KNOW.} User: \emph{Question: \{question\}
+Answer:}
+
+\paragraph{Arm A, P1.} System: \emph{You report epistemic states as three independent numbers.}
+User: \emph{Question: \{question\} / Proposed answer: \{answer\} / Rate three independent degrees,
+each in [0,1]. They need not sum to 1. T = degree to which the proposed answer is true; I = degree
+of indeterminacy (vagueness, missing information, undecidability); F = degree to which the
+proposed answer is false. Reply with exactly one line in this format and nothing else:
+T=<number> I=<number> F=<number>}
+
+\paragraph{Arm A, P2.} Same system. User: \emph{Question: \{question\} / Proposed answer:
+\{answer\} / First, in at most three sentences, state what you actually know about this question,
+what is uncertain, and why. Then, on a final separate line, give three independent degrees in
+[0,1] which need not sum to 1: T (truth of the proposed answer), I (indeterminacy), F (falsity).
+The final line must have exactly this format: T=<number> I=<number> F=<number>}
+
+\paragraph{Arm A, P3.} System: \emph{You report epistemic states using verbal grades.} User:
+\emph{Proposed answer: \{answer\} / Question: \{question\} / Assign one verbal grade to each of
+the three dimensions below. The dimensions are independent: a high grade on one does not lower
+the others. Scale: NONE / VERY LOW / LOW / MEDIUM / HIGH / VERY HIGH / TOTAL. FALSITY -- the
+proposed answer is wrong; INDETERMINACY -- the matter is vague, unsettled or unknowable; TRUTH --
+the proposed answer is right. Reply with exactly three lines and nothing else: FALSITY=<grade>
+INDETERMINACY=<grade> TRUTH=<grade>} Grid: NONE 0, VERY LOW 0.15, LOW 0.3, MEDIUM 0.5, HIGH 0.7,
+VERY HIGH 0.85, TOTAL 1.
+
+\paragraph{Arm B, P1.} System: \emph{You report confidence as a single number.} User:
+\emph{Question: \{question\} / Proposed answer: \{answer\} / How confident are you that the
+proposed answer is correct? Reply with a single integer from 0 to 100 and nothing else.}
+
+\paragraph{Arm B, P2.} Same system. User: \emph{$\ldots$ First, in at most three sentences,
+state what you actually know about this question, what is uncertain, and why. Then, on a final
+separate line, give your confidence that the proposed answer is correct as an integer from 0 to
+100, in exactly this format: CONFIDENCE=<integer>}
+
+\paragraph{Arm B, P3.} System: \emph{You report confidence using verbal grades.} User:
+\emph{Proposed answer: \{answer\} / Question: \{question\} / How likely is it that the proposed
+answer is CORRECT? Scale: NONE / VERY LOW / LOW / MEDIUM / HIGH / VERY HIGH / TOTAL. Reply with
+exactly one line and nothing else: CORRECTNESS=<grade>}
+
+\paragraph{Arm C, P1.} System: \emph{You verify proposed answers.} User: \emph{Question:
+\{question\} / Proposed answer: \{answer\} / Is the proposed answer true? Reply with a single
+word, True or False, and nothing else.}
+
+\paragraph{Arm C, P2.} Same system. User: \emph{$\ldots$ Check the proposed answer in at most
+three sentences, then give your verdict on a final separate line in exactly this format:
+VERDICT=<True or False>}
+
+\paragraph{Arm C, P3.} Same system. User: \emph{Proposed answer: \{answer\} / Question:
+\{question\} / What is the probability that the proposed answer is TRUE? Reply with a single
+number between 0 and 1 and nothing else.}
+
+\paragraph{Arm A-label (post hoc, closed-label datasets).} As arm A, with ``Task:'' and
+``Chosen label:'' in place of ``Question:'' and ``Proposed answer:'', and the sentence \emph{The
+chosen label is one option from a fixed set of classification labels. Rate the CORRECTNESS OF
+THE CHOICE, not the meaning of the label itself}, with $T$/$I$/$F$ redefined as the degree to
+which the chosen label is the correct classification / indeterminacy about which label is correct
+/ the degree to which the chosen label is the wrong classification.
+
+\paragraph{Parsing.} Numeric triples are parsed by the regular expression
+\texttt{T=<n> I=<n> F=<n>} (line breaks tolerated); verbal grades by exact match on the grid;
+unparseable output is recorded as missing, never imputed.
 
 \bibliographystyle{plainnat}
 \bibliography{refs}

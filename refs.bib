@@ -1,7 +1,6 @@
 % Paper 2 -- references.
-% VERIFIED entries only. Each was checked against arXiv/publisher on 2026-08-23.
-% Do NOT add an entry you have not opened. Missing fields marked TODO must be
-% completed from the actual record before submission.
+% VERIFIED entries only. arXiv entries checked against export.arxiv.org and journal entries
+% against Crossref on 2026-09-01. Do NOT add an entry you have not opened.
 
 @article{leyva2026breaking,
   title   = {Breaking the Chains of Probability: Neutrosophic Logic as a New Framework
@@ -9,8 +8,7 @@
   author  = {Leyva-V{\'a}zquez, Maikel Yelandi and Smarandache, Florentin},
   journal = {arXiv preprint arXiv:2605.24053},
   year    = {2026},
-  note    = {Also published in Neutrosophic Sets and Systems, vol. 99 (2026).
-             DISCLOSE self-citation and the venue relationship in the submission letter.},
+  note    = {Also published in Neutrosophic Sets and Systems, vol. 99 (2026)},
   url     = {https://arxiv.org/abs/2605.24053}
 }
 
@@ -20,14 +18,20 @@
   author  = {Mason, Tony},
   journal = {arXiv preprint arXiv:2604.09602},
   year    = {2026},
-  note    = {Cross-vendor replication AND objection: reports that scalar T/I/F cannot
-             separate paradox, ignorance and contingency. Cite BOTH aspects.},
   url     = {https://arxiv.org/abs/2604.09602}
 }
 
+@article{mason2026observability,
+  title   = {Epistemic Observability in Language Models},
+  author  = {Mason, Tony and Anand, Vaastav},
+  journal = {arXiv preprint arXiv:2603.20531},
+  year    = {2026},
+  url     = {https://arxiv.org/abs/2603.20531}
+}
+
 @article{protocolsens2026,
-  title   = {Asking Is Not Enough: Protocol Sensitivity in {LLM} Confidence Calibration},
-  author  = {TODO: complete author list from the arXiv record},
+  title   = {Same Answer, Different Confidence: Protocol Sensitivity in {LLM} Confidence Calibration},
+  author  = {Kim, Hankyeol and Kang, Pilsung},
   journal = {arXiv preprint arXiv:2605.27752},
   year    = {2026},
   url     = {https://arxiv.org/abs/2605.27752}
@@ -35,7 +39,7 @@
 
 @article{acse2026,
   title   = {{LLMs} Uncertainty Quantification via Adaptive Conformal Semantic Entropy},
-  author  = {TODO: complete author list from the arXiv record},
+  author  = {Karimi, Hamed and Meyappan, Vaishali and Samavi, Reza},
   journal = {arXiv preprint arXiv:2605.04295},
   year    = {2026},
   url     = {https://arxiv.org/abs/2605.04295}
@@ -44,18 +48,156 @@
 @article{know2guess2026,
   title   = {Know2Guess: A Contamination-Aware Multi-Zone Benchmark for
              Knowledge-Boundary Evaluation in Large Language Models},
-  author  = {TODO: complete author list from the arXiv record},
+  author  = {Meng, Renwei and Zhang, Bowen and Wang, Jian and others},
   journal = {arXiv preprint arXiv:2606.26101},
   year    = {2026},
   url     = {https://arxiv.org/abs/2606.26101}
 }
 
-% ---------------------------------------------------------------------------
-% TO ADD BEFORE SUBMISSION (locate the canonical record, do not cite from memory):
-%   - Kuhn, Gal & Farquhar, semantic entropy (ICLR 2023) and the Nature 2024 paper.
-%   - Kadavath et al., "Language Models (Mostly) Know What They Know" (P(True)).
-%   - Geifman & El-Yaniv, selective prediction / risk-coverage.
-%   - Angelopoulos & Bates, conformal prediction tutorial.
-%   - AbstentionBench and UA-Bench, for the abstention benchmark paragraph.
-%   - A Dempster-Shafer / subjective logic reference for the formalism-family paragraph.
-% ---------------------------------------------------------------------------
+@inproceedings{kuhn2023semantic,
+  title     = {Semantic Uncertainty: Linguistic Invariances for Uncertainty Estimation in Natural Language Generation},
+  author    = {Kuhn, Lorenz and Gal, Yarin and Farquhar, Sebastian},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2023},
+  note      = {arXiv:2302.09664}
+}
+
+@article{farquhar2024detecting,
+  title   = {Detecting hallucinations in large language models using semantic entropy},
+  author  = {Farquhar, Sebastian and Kossen, Jannik and Kuhn, Lorenz and Gal, Yarin},
+  journal = {Nature},
+  volume  = {630},
+  pages   = {625--630},
+  year    = {2024},
+  doi     = {10.1038/s41586-024-07421-0}
+}
+
+@article{kadavath2022know,
+  title   = {Language Models (Mostly) Know What They Know},
+  author  = {Kadavath, Saurav and Conerly, Tom and Askell, Amanda and others},
+  journal = {arXiv preprint arXiv:2207.05221},
+  year    = {2022},
+  url     = {https://arxiv.org/abs/2207.05221}
+}
+
+@inproceedings{tian2023just,
+  title     = {Just Ask for Calibration: Strategies for Eliciting Calibrated Confidence Scores from Language Models Fine-Tuned with Human Feedback},
+  author    = {Tian, Katherine and Mitchell, Eric and Zhou, Allan and others},
+  booktitle = {Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  year      = {2023},
+  note      = {arXiv:2305.14975}
+}
+
+@inproceedings{xiong2024can,
+  title     = {Can {LLMs} Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in {LLMs}},
+  author    = {Xiong, Miao and Hu, Zhiyuan and Lu, Xinyang and others},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2024},
+  note      = {arXiv:2306.13063}
+}
+
+@inproceedings{geifman2017selective,
+  title     = {Selective Classification for Deep Neural Networks},
+  author    = {Geifman, Yonatan and El-Yaniv, Ran},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2017},
+  note      = {arXiv:1705.08500}
+}
+
+@article{angelopoulos2021gentle,
+  title   = {A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification},
+  author  = {Angelopoulos, Anastasios N. and Bates, Stephen},
+  journal = {arXiv preprint arXiv:2107.07511},
+  year    = {2021},
+  url     = {https://arxiv.org/abs/2107.07511}
+}
+
+@inproceedings{nie2020chaosnli,
+  title     = {What Can We Learn from Collective Human Opinions on Natural Language Inference Data?},
+  author    = {Nie, Yixin and Zhou, Xiang and Bansal, Mohit},
+  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  year      = {2020},
+  note      = {arXiv:2010.03532}
+}
+
+@inproceedings{baan2022stop,
+  title     = {Stop Measuring Calibration When Humans Disagree},
+  author    = {Baan, Joris and Aziz, Wilker and Plank, Barbara and Fern{\'a}ndez, Raquel},
+  booktitle = {Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  year      = {2022},
+  note      = {arXiv:2210.16133}
+}
+
+@inproceedings{joshi2017triviaqa,
+  title     = {{TriviaQA}: A Large Scale Distantly Supervised Challenge Dataset for Reading Comprehension},
+  author    = {Joshi, Mandar and Choi, Eunsol and Weld, Daniel S. and Zettlemoyer, Luke},
+  booktitle = {Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (ACL)},
+  year      = {2017},
+  note      = {arXiv:1705.03551}
+}
+
+@article{welbl2017sciq,
+  title   = {Crowdsourcing Multiple Choice Science Questions},
+  author  = {Welbl, Johannes and Liu, Nelson F. and Gardner, Matt},
+  journal = {arXiv preprint arXiv:1707.06209},
+  year    = {2017},
+  url     = {https://arxiv.org/abs/1707.06209}
+}
+
+@article{kwiatkowski2019natural,
+  title   = {Natural Questions: A Benchmark for Question Answering Research},
+  author  = {Kwiatkowski, Tom and Palomaki, Jennimaria and Redfield, Olivia and others},
+  journal = {Transactions of the Association for Computational Linguistics},
+  volume  = {7},
+  pages   = {453--466},
+  year    = {2019},
+  doi     = {10.1162/tacl_a_00276}
+}
+
+@inproceedings{lee2019latent,
+  title     = {Latent Retrieval for Weakly Supervised Open Domain Question Answering},
+  author    = {Lee, Kenton and Chang, Ming-Wei and Toutanova, Kristina},
+  booktitle = {Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics (ACL)},
+  year      = {2019},
+  note      = {arXiv:1906.00300. Source of the NQ-open split.}
+}
+
+@article{ahdritz2024distinguishing,
+  title   = {Distinguishing the Knowable from the Unknowable with Language Models},
+  author  = {Ahdritz, Gustaf and Qin, Tian and Vyas, Nikhil and Barak, Boaz and Edelman, Benjamin L.},
+  journal = {arXiv preprint arXiv:2402.03563},
+  year    = {2024},
+  url     = {https://arxiv.org/abs/2402.03563}
+}
+
+@inproceedings{shi2026notall,
+  title     = {Not All Inconsistency Is Equal: Decomposing {LVLM} Uncertainty into Belief Divergence and Belief Conflict},
+  author    = {Shi, Yuxuan and Yue, Zihan and Liu, Yifan and Chen, Wei},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume    = {40},
+  pages     = {25339--25347},
+  year      = {2026},
+  doi       = {10.1609/aaai.v40i30.39727}
+}
+
+@article{miller2024adding,
+  title   = {Adding Error Bars to Evals: A Statistical Approach to Language Model Evaluations},
+  author  = {Miller, Evan},
+  journal = {arXiv preprint arXiv:2411.00640},
+  year    = {2024},
+  url     = {https://arxiv.org/abs/2411.00640}
+}
+
+@book{shafer1976mathematical,
+  title     = {A Mathematical Theory of Evidence},
+  author    = {Shafer, Glenn},
+  publisher = {Princeton University Press},
+  year      = {1976}
+}
+
+@book{josang2016subjective,
+  title     = {Subjective Logic: A Formalism for Reasoning Under Uncertainty},
+  author    = {J{\o}sang, Audun},
+  publisher = {Springer},
+  year      = {2016}
+}

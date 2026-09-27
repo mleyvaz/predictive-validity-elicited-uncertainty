@@ -173,3 +173,20 @@ txt = open(os.path.join(R, 'chaosnli_c_v2.log'), encoding='utf-8').read(); i = t
 EX = os.path.join(os.path.dirname(os.path.abspath(R)), "results_extra")
 hdr("Extra analyses (collapse, TOST, ChaosNLI control) -- results_extra/extra_summary.txt")
 print(open(os.path.join(EX, "extra_summary.txt"), encoding="utf-8").read())
+
+# ---- Recompute the exploratory analyses (a) and (c) from the raw file and compare with the saved CSVs;
+#      for (b) recompute the pooled point estimate (the bootstrap interval takes ~15 min: run extra_analyses.py).
+import subprocess, tempfile
+here = os.path.dirname(os.path.abspath(__file__))
+with tempfile.TemporaryDirectory() as td:
+    subprocess.run([sys.executable, os.path.join(here, "extra_analyses.py"), "--out", td, "--parts", "ac", "--n-boot", "2000"],
+                   check=True, capture_output=True)
+    hdr("Recomputation check of results_extra (parts a and c, same seeds)")
+    for f in ["collapse_cells.csv", "chaosnli_control.csv"]:
+        a_ = pd.read_csv(os.path.join(td, f)); b_ = pd.read_csv(os.path.join(EX, f))
+        num = a_.select_dtypes("number").columns
+        print(f, "max abs diff vs saved:", float(np.nanmax(np.abs(a_[num].values - b_[num].values))))
+t_saved = pd.read_csv(os.path.join(EX, "tost.csv"))
+h1 = c2[c2.hypothesis == "H1"]
+print("TOST pooled point estimate saved:", t_saved.groupby("set").pooled.first().round(6).to_dict(),
+      "| recomputed from contrasts_v2 (all48):", round(h1.delta_auroc.mean(), 6), "(noSciQ36):", round(h1[h1.dataset != "sciq"].delta_auroc.mean(), 6))

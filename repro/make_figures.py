@@ -6,7 +6,7 @@ by hand. Every plotted value comes from:
   results_v2/contrasts_v2.csv      (per-cell paired differences)
   results_v2/pooled_v2.csv         (pooled means + item-cluster bootstrap intervals)
   results_v2/conformal_v2.csv      (tie-aware risk-calibrated thresholds, H5)
-Usage: python make_figures.py   (run from repro/) -> ../manuscript_tmlr/figures/*.pdf|png
+Usage: python make_figures.py [--out DIR]   (default: repro/figures) -> DIR/*.pdf|png
 """
 import json, sys
 from pathlib import Path
@@ -18,7 +18,8 @@ from matplotlib.patches import FancyBboxPatch
 
 HERE = Path(__file__).resolve().parent
 R, V2 = HERE / "results", HERE / "results_v2"
-OUT = HERE.parent / "manuscript_tmlr" / "figures" if (HERE.parent / "manuscript_tmlr").exists() else HERE / "figures"
+import argparse as _ap
+_p = _ap.ArgumentParser(); _p.add_argument("--out", default=str(HERE / "figures")); OUT = Path(_p.parse_args().out)
 OUT.mkdir(parents=True, exist_ok=True)
 sys.path.insert(0, str(HERE / "code"))
 
@@ -87,7 +88,7 @@ P = pooled[pooled.set == "all48"].set_index("contrast")
 spec = [  # label, per-cell values, pooled (mean, lo, hi) or None, verdict
     ("H1  fitted triple − scalar\n(AUROC)", cells("H1").delta_auroc.values, P.loc["H1"], "fails"),
     ("H2  fitted triple − fixed F−T\n(AUROC, preregistered)", cells("H2").delta_auroc.values, P.loc["H2"], "fails"),
-    ("H2n fitted T,I,F − fitted T,F\n(AUROC, nested, post hoc)", cells("H2n").delta_auroc.values, P.loc["H2n"], "small, inconsistent"),
+    ("H2n fitted T,I,F − fitted T,F\n(AUROC, POST HOC nested contrast)", cells("H2n").delta_auroc.values, P.loc["H2n"], "small, inconsistent"),
     ("H3  sample entropy − fitted triple\n(AUROC)", cells("H3_vs_s_TIF_lr").delta_auroc.values, None, "holds on generation"),
     ("H4  between-signal diff − protocol range\n(AUROC, per model × dataset)", np.array(h4), None, "fails"),
     (f"H5  coverage triple − scalar at α=0.10\n({len(h5)} comparable cells)", h5, None, "not supported"),

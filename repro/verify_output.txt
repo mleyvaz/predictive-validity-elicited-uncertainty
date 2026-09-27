@@ -266,9 +266,18 @@ llama-3.1-8b      P2: rho(I,H) +0.082  rho(1-scalar,H) +0.106  diff -0.023 [-0.1
 llama-3.1-8b      P3: rho(I,H) +0.097  rho(1-scalar,H) -0.004  diff +0.100 [-0.053, +0.249]  partial(I,H|scalar) +0.099 [-0.018, +0.212]  AUROC ambiguous-half: I 0.539 scalar 0.497
 cells (model x protocol) where diff CI is entirely > 0: 0; entirely < 0: 7; of 12
 cells where partial(I,H|scalar) CI excludes 0 (positive): 0; negative: 2
+Bonferroni (12 cells, 99.58% percentile CI): diff entirely < 0: 2; > 0: 0; partial < 0: 2; partial > 0: 0
+point estimates of diff > 0: 3 of 12; n per cell: 295-300
 mean AUROC for ambiguous half: I 0.547, scalar 0.588
 == (b) TOST, fitted triple - scalar, pooled AUROC difference (item-cluster bootstrap)
-all48 margin 0.02: pooled -0.0103, 90% CI [-0.0277, +0.0053], bootstrap p(<=-m) 0.181, p(>=+m) 0.001, equivalent=False
-all48 margin 0.03: pooled -0.0103, 90% CI [-0.0277, +0.0053], bootstrap p(<=-m) 0.028, p(>=+m) 0.000, equivalent=True
-noSciQ36 margin 0.02: pooled -0.0028, 90% CI [-0.0205, +0.0148], bootstrap p(<=-m) 0.057, p(>=+m) 0.018, equivalent=False
-noSciQ36 margin 0.03: pooled -0.0028, 90% CI [-0.0205, +0.0148], bootstrap p(<=-m) 0.004, p(>=+m) 0.001, equivalent=True
+all48 margin 0.01: pooled -0.0103, 90% CI [-0.0276, +0.0071], upper<+m True, lower>-m False, equivalent=False
+all48 margin 0.02: pooled -0.0103, 90% CI [-0.0276, +0.0071], upper<+m True, lower>-m False, equivalent=False
+all48 margin 0.03: pooled -0.0103, 90% CI [-0.0276, +0.0071], upper<+m True, lower>-m True, equivalent=True
+noSciQ36 margin 0.01: pooled -0.0028, 90% CI [-0.0206, +0.0155], upper<+m False, lower>-m False, equivalent=False
+noSciQ36 margin 0.02: pooled -0.0028, 90% CI [-0.0206, +0.0155], upper<+m True, lower>-m False, equivalent=False
+noSciQ36 margin 0.03: pooled -0.0028, 90% CI [-0.0206, +0.0155], upper<+m True, lower>-m True, equivalent=True
+
+=== Recomputation check of results_extra (parts a and c, same seeds)
+collapse_cells.csv max abs diff vs saved: 0.0
+chaosnli_control.csv max abs diff vs saved: 0.0
+TOST pooled point estimate saved: {'all48': -0.010329, 'noSciQ36': -0.002807} | recomputed from contrasts_v2 (all48): -0.010329 (noSciQ36): -0.002807

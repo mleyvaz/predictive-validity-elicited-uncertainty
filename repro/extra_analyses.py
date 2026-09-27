@@ -26,7 +26,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE / "code"))
 import analyze as A, analyze_v2 as A2
 
-OUT = HERE / "results_extra"; OUT.mkdir(exist_ok=True)
+OUT = HERE / "results_extra"
 SEED = A.SEED
 
 
@@ -79,7 +79,7 @@ def part_b(df, n_boot, lines):
             t = ~cal
             ok = t & ~np.isnan(sig["s_TIF_lr"]) & ~np.isnan(sig["verbalized_scalar"])
             cells.append(dict(ds=ds, y=y[ok], a=sig["s_TIF_lr"][ok], b=sig["verbalized_scalar"][ok], ids=g["item_id"].to_numpy()[ok]))
-    ids_by_ds = {ds: np.array(sorted(set(np.concatenate([c["ids"] for c in cells if c["ds"] == ds])))) for ds in {c["ds"] for c in cells}}
+    ids_by_ds = {ds: np.array(sorted(set(np.concatenate([c["ids"] for c in cells if c["ds"] == ds])))) for ds in sorted({c["ds"] for c in cells})}
     rng = np.random.default_rng(SEED + 7)
 
     def pooled(w_by_ds, subset):
@@ -104,15 +104,15 @@ def part_b(df, n_boot, lines):
             boots.append(pooled(wm, subset))
         b = np.array(boots)
         lo90, hi90 = np.nanpercentile(b, [5, 95]); lo95, hi95 = np.nanpercentile(b, [2.5, 97.5])
-        for margin in (0.02, 0.03):
+        for margin in (0.01, 0.02, 0.03):
             rows.append(dict(set=label, margin=margin, pooled=pt, ci90_lo=lo90, ci90_hi=hi90, ci95_lo=lo95, ci95_hi=hi95,
-                             p_lower=float(np.mean(b <= -margin)), p_upper=float(np.mean(b >= margin)),
+                             upper_bound_excludes_advantage=bool(hi90 < margin), lower_bound_excludes_disadvantage=bool(lo90 > -margin),
                              equivalent=bool(lo90 > -margin and hi90 < margin), n_boot=n_boot))
     t = pd.DataFrame(rows); t.to_csv(OUT / "tost.csv", index=False)
     lines.append("== (b) TOST, fitted triple - scalar, pooled AUROC difference (item-cluster bootstrap)")
     for r in rows:
         lines.append(f"{r['set']} margin {r['margin']}: pooled {r['pooled']:+.4f}, 90% CI [{r['ci90_lo']:+.4f}, {r['ci90_hi']:+.4f}], "
-                     f"bootstrap p(<=-m) {r['p_lower']:.3f}, p(>=+m) {r['p_upper']:.3f}, equivalent={r['equivalent']}")
+                     f"upper<+m {r['upper_bound_excludes_advantage']}, lower>-m {r['lower_bound_excludes_disadvantage']}, equivalent={r['equivalent']}")
     return t
 
 
@@ -149,7 +149,9 @@ def part_c(df, n_boot, lines):
             amb = (H > np.median([m["human_entropy"] for m in meta.values()])).astype(int)
             rows.append(dict(model=mo, protocol=p, n=n, rho_I_H=rI, rho_scalar_H=rS, diff=rI - rS,
                              diff_lo=np.percentile(bd, 2.5), diff_hi=np.percentile(bd, 97.5),
+                             diff_lo_bonf=np.percentile(bd, 100 * 0.025 / 12), diff_hi_bonf=np.percentile(bd, 100 - 100 * 0.025 / 12),
                              partial_I_H_given_scalar=pr, partial_lo=np.percentile(bp, 2.5), partial_hi=np.percentile(bp, 97.5),
+                             partial_lo_bonf=np.percentile(bp, 100 * 0.025 / 12), partial_hi_bonf=np.percentile(bp, 100 - 100 * 0.025 / 12),
                              auroc_amb_I=roc_auc_score(amb, I), auroc_amb_scalar=roc_auc_score(amb, s)))
     c = pd.DataFrame(rows); c.to_csv(OUT / "chaosnli_control.csv", index=False)
     lines.append("== (c) ChaosNLI positive control: does elicited I track human label entropy better than the scalar?")
@@ -159,14 +161,20 @@ def part_c(df, n_boot, lines):
                      f"[{r['partial_lo']:+.3f}, {r['partial_hi']:+.3f}]  AUROC ambiguous-half: I {r['auroc_amb_I']:.3f} scalar {r['auroc_amb_scalar']:.3f}")
     lines.append(f"cells (model x protocol) where diff CI is entirely > 0: {int((c.diff_lo > 0).sum())}; entirely < 0: {int((c.diff_hi < 0).sum())}; of {len(c)}")
     lines.append(f"cells where partial(I,H|scalar) CI excludes 0 (positive): {int((c.partial_lo > 0).sum())}; negative: {int((c.partial_hi < 0).sum())}")
+    lines.append(f"Bonferroni (12 cells, 99.58% percentile CI): diff entirely < 0: {int((c.diff_hi_bonf < 0).sum())}; > 0: {int((c.diff_lo_bonf > 0).sum())}; partial < 0: {int((c.partial_hi_bonf < 0).sum())}; partial > 0: {int((c.partial_lo_bonf > 0).sum())}")
+    lines.append(f"point estimates of diff > 0: {int((c['diff'] > 0).sum())} of {len(c)}; n per cell: {int(c.n.min())}-{int(c.n.max())}")
     lines.append(f"mean AUROC for ambiguous half: I {c.auroc_amb_I.mean():.3f}, scalar {c.auroc_amb_scalar.mean():.3f}")
     return c
 
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(); ap.add_argument("--n-boot", type=int, default=2000); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("--n-boot", type=int, default=2000)
+    ap.add_argument("--out", default=str(HERE / "results_extra")); ap.add_argument("--parts", default="acb")
+    a = ap.parse_args(); OUT = Path(a.out); OUT.mkdir(parents=True, exist_ok=True)
     df = A.build_frame(HERE / "results" / "raw_paper2.jsonl")
     lines = []
-    part_a(df, lines); part_c(df, a.n_boot, lines); part_b(df, a.n_boot, lines)
+    if "a" in a.parts: part_a(df, lines)
+    if "c" in a.parts: part_c(df, a.n_boot, lines)
+    if "b" in a.parts: part_b(df, a.n_boot, lines)
     (OUT / "extra_summary.txt").write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines))

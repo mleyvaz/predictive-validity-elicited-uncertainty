@@ -1,3 +1,5 @@
+C:\Users\HP\Documents\Codex\2026-09-27\envios_q2q4\30_PredictiveValidity\repro\code\analyze.py:59: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  df["error"] = df["error"].fillna(False).astype(bool)
 == (a) dimensional collapse (48 model x dataset x protocol cells)
 rho_T_F: median -0.826  IQR [-0.886, -0.677]  min -0.987  max -0.253  n 48
 rho_T_scalar: median 0.551  IQR [0.368, 0.632]  min -0.216  max 0.874  n 48

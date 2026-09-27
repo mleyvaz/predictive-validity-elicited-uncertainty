@@ -163,7 +163,7 @@ axs[0].set_ylabel("selective risk (error rate)")
 axs[0].legend(frameon=False, fontsize=6.8, loc="upper left")
 fig.tight_layout(); save(fig, "fig4_risk_coverage")
 
-# ------------------------------------------------------------------ Fig 5: ChaosNLI positive control (results_extra)
+# ------------------------------------------------------------------ Fig 5: ChaosNLI external-criterion check (results_extra)
 cc = pd.read_csv(HERE / "results_extra" / "chaosnli_control.csv")
 MLAB = {"claude-haiku-4.5": "Claude", "gemini-2.5-flash": "Gemini", "gpt-4o-mini": "gpt-4o-mini", "llama-3.1-8b": "Llama"}
 cc["lab"] = cc.model.map(MLAB) + " " + cc.protocol

@@ -2,8 +2,9 @@
 
 Code, data, and preregistration history for a test of whether an elicited three-component
 epistemic state (T, I, F) from a large language model predicts answer errors better than one
-verbalized confidence number. The result is negative. The manuscript is under preparation; its
-title and venue will be added here.
+verbalized confidence number. The result is negative. Manuscript: *Do Elicited (T, I, F) Epistemic States Predict Language-Model Errors? A
+Pre-Specified Negative Result, with Exploratory Evidence that the Three Numbers Behave Largely as
+One* (M. Y. Leyva Vázquez and R. Sánchez Casanova), submitted to *Inteligencia Artificial*.
 
 **What was tested.**
 - **Models:** gpt-4o-mini, Claude Haiku 4.5, Gemini 2.5 Flash and Llama 3.1 8B, all accessed through OpenRouter on 1 September 2026.
@@ -44,21 +45,18 @@ than a registry.
 ```
 pip install -r requirements.txt
 cd repro
-python code/analyze.py --raw results/raw_paper2.jsonl        # preregistered analysis (writes code/results/*.csv)
-python code/analyze_v2.py --raw results/raw_paper2.jsonl --out results_v2   # post-review analyses
-python code/analyze_chaosnli_constructed_v2.py --raw results/raw_paper2.jsonl
-python extra_analyses.py                                         # exploratory: collapse, TOST, ChaosNLI control
-python verify_numbers.py results results/raw_paper2.jsonl > verify_output.txt
-python make_figures.py                                           # figures from saved outputs only -> repro/figures
+python compare_outputs.py            # regenerate all outputs from the raw file and compare (~30-40 min; --quick: ~1 min)
+python verify_numbers.py results results/raw_paper2.jsonl > verify_output.txt   # recompute the quoted numbers
+python make_figures.py               # figures -> repro/figures
 ```
 
-`verify_numbers.py` recomputes every number quoted in the manuscript from the saved outputs.
+`compare_outputs.py` prints the maximum absolute difference between each regenerated CSV and the distributed one (0.0 = exact). `verify_numbers.py` recomputes the numbers quoted in the manuscript from those outputs.
 
 ## Re-collecting the data (costs money)
 
 ```
 set OPENROUTER_API_KEY=...        # never commit a key; the scripts read it from the environment
-python make_datasets.py           # rebuilds data/*.jsonl; set CHAOSNLI_DIR to a local ChaosNLI v1.0 copy
+python make_datasets.py           # (repository root) rebuilds data/*.jsonl; set CHAOSNLI_DIR to a local ChaosNLI v1.0 copy
 python run_experiment.py --datasets data/triviaqa.jsonl data/nqopen.jsonl data/sciq.jsonl data/chaosnli.jsonl --limit 300
 ```
 

@@ -7,7 +7,7 @@ Extra analyses (27-sep-2026), EXPLORATORY, computed only from the saved raw file
  (b) Equivalence test (TOST) of the fitted triple vs the verbalized scalar in AUROC, margin +-0.02,
      on the pooled mean over cells, with an item-cluster bootstrap (90% interval) -- same resampling
      scheme as analyze_v2 (item ids resampled within dataset, shared across models and protocols).
- (c) ChaosNLI as a positive control for a task that needs an indeterminacy channel: does the
+ (c) ChaosNLI external-criterion check (exploratory): a task where an indeterminacy channel could help: does the
      elicited I track human label entropy better than the scalar? Per model and protocol:
      Spearman rho(I, H), rho(1-scalar, H), their difference with a bootstrap CI (items resampled),
      and the partial rank correlation of I with H given the scalar, with bootstrap CI.
@@ -154,7 +154,7 @@ def part_c(df, n_boot, lines):
                              partial_lo_bonf=np.percentile(bp, 100 * 0.025 / 12), partial_hi_bonf=np.percentile(bp, 100 - 100 * 0.025 / 12),
                              auroc_amb_I=roc_auc_score(amb, I), auroc_amb_scalar=roc_auc_score(amb, s)))
     c = pd.DataFrame(rows); c.to_csv(OUT / "chaosnli_control.csv", index=False)
-    lines.append("== (c) ChaosNLI positive control: does elicited I track human label entropy better than the scalar?")
+    lines.append("== (c) ChaosNLI external-criterion check (exploratory): does elicited I track human label entropy better than the scalar?")
     for r in rows:
         lines.append(f"{r['model']:17s} {r['protocol']}: rho(I,H) {r['rho_I_H']:+.3f}  rho(1-scalar,H) {r['rho_scalar_H']:+.3f}  "
                      f"diff {r['diff']:+.3f} [{r['diff_lo']:+.3f}, {r['diff_hi']:+.3f}]  partial(I,H|scalar) {r['partial_I_H_given_scalar']:+.3f} "

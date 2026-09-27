@@ -251,7 +251,7 @@ share_I_zero: median 0.365  IQR [0.109, 0.694]  min 0.000  max 0.983  n 48
   P3: median pc1 0.644; median rho_T_F -0.804; median rho_T_scalar 0.432; median share I=0 0.458
 cells with pc1_share >= 0.80: 6 of 48; >= 0.67: 34
 cells with |rho_T_F| >= 0.8: 25; with rho_T_scalar >= 0.8: 3
-== (c) ChaosNLI positive control: does elicited I track human label entropy better than the scalar?
+== (c) ChaosNLI external-criterion check (exploratory): does elicited I track human label entropy better than the scalar?
 claude-haiku-4.5  P1: rho(I,H) +0.309  rho(1-scalar,H) +0.415  diff -0.106 [-0.190, -0.026]  partial(I,H|scalar) +0.017 [-0.105, +0.131]  AUROC ambiguous-half: I 0.669 scalar 0.702
 claude-haiku-4.5  P2: rho(I,H) +0.362  rho(1-scalar,H) +0.436  diff -0.074 [-0.150, -0.000]  partial(I,H|scalar) +0.037 [-0.081, +0.160]  AUROC ambiguous-half: I 0.685 scalar 0.728
 claude-haiku-4.5  P3: rho(I,H) +0.019  rho(1-scalar,H) +0.374  diff -0.354 [-0.504, -0.214]  partial(I,H|scalar) -0.070 [-0.187, +0.048]  AUROC ambiguous-half: I 0.548 scalar 0.695

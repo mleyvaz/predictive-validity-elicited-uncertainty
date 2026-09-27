@@ -1,0 +1,274 @@
+
+=== Table 1 main: mean [min,max] AUROC by signal x protocol
+s_TIF_lr 0.646 [0.39,0.85] n=16 | 0.700 [0.54,0.90] n=16 | 0.646 [0.52,0.89] n=16
+s_TIF_fixed 0.653 [0.52,0.79] n=16 | 0.697 [0.51,0.90] n=16 | 0.642 [0.50,0.88] n=16
+s_TF 0.654 [0.52,0.79] n=16 | 0.703 [0.51,0.90] n=16 | 0.627 [0.49,0.87] n=16
+verbalized_scalar 0.657 [0.45,0.89] n=16 | 0.710 [0.50,0.87] n=16 | 0.658 [0.50,0.89] n=16
+p_true 0.614 [0.51,0.80] n=16 | 0.603 [0.51,0.72] n=16 | 0.652 [0.44,0.87] n=16
+seq_logprob 0.796 [0.56,0.93] n=8 | 0.796 [0.56,0.93] n=8 | 0.796 [0.56,0.93] n=8
+semantic_entropy 0.744 [0.56,0.93] n=16 | 0.744 [0.56,0.93] n=16 | 0.744 [0.56,0.93] n=16
+
+=== Table 2 by dataset (mean over protocols & models)
+dataset            chaosnli  nqopen   sciq  triviaqa
+signal                                              
+p_true                0.563   0.606  0.682     0.641
+s_TF                  0.588   0.598  0.750     0.708
+s_TIF_lr              0.592   0.589  0.764     0.711
+semantic_entropy      0.591   0.802  0.758     0.825
+seq_logprob           0.632   0.829  0.855     0.869
+verbalized_scalar     0.564   0.630  0.800     0.707
+
+=== H1
+P1 mean=-0.011 + 1 - 4
+P2 mean=-0.011 + 0 - 1
+P3 mean=-0.010 + 1 - 1
+overall mean -0.0103 positive share 0.5 sig+ 2 sig- 6
+by dataset {'chaosnli': 0.028, 'nqopen': -0.041, 'sciq': -0.033, 'triviaqa': 0.005}
+sig by dataset (+/-) {'chaosnli': (1, 0), 'nqopen': (0, 4), 'sciq': (0, 1), 'triviaqa': (1, 1)}
+excl SciQ mean -0.0028 n 36
+between-cell SE of mean 0.0111
+mean CI half-width 0.113
+
+=== H2
+P1 mean=-0.007 + 0 - 2
+P2 mean=-0.003 + 0 - 0
+P3 mean=+0.019 + 4 - 0
+overall mean 0.0028 positive share 0.479 sig+ 4 sig- 2
+by dataset {'chaosnli': 0.004, 'nqopen': -0.009, 'sciq': 0.013, 'triviaqa': 0.003}
+sig by dataset (+/-) {'chaosnli': (1, 1), 'nqopen': (2, 1), 'sciq': (1, 0)}
+excl SciQ mean -0.0007 n 36
+between-cell SE of mean 0.0069
+mean CI half-width 0.039
+H2 P3 sig cells: [['claude-haiku-4.5', 'nqopen', 0.0762548262548262], ['gemini-2.5-flash', 'sciq', 0.0702898550724637], ['gpt-4o-mini', 'chaosnli', 0.080685618729097], ['gpt-4o-mini', 'nqopen', 0.0239316239316239]]
+
+=== H3
+P1 mean=+0.096 + 10 - 0
+P2 mean=+0.043 + 6 - 2
+P3 mean=+0.097 + 6 - 1
+overall mean 0.0786 positive share 0.75 sig+ 22 sig- 3
+by dataset {'chaosnli': -0.0, 'nqopen': 0.208, 'sciq': -0.006, 'triviaqa': 0.113}
+sig by dataset (+/-) {'chaosnli': (1, 1), 'nqopen': (12, 0), 'sciq': (4, 2), 'triviaqa': (5, 0)}
+excl SciQ mean 0.107 n 36
+between-cell SE of mean 0.0222
+mean CI half-width 0.137
+
+=== Post hoc label arm
+H1lab {'P1': np.float64(-0.102), 'P2': np.float64(-0.023), 'P3': np.float64(-0.083)}
+Hlab_vs_A {'P1': np.float64(-0.107), 'P2': np.float64(-0.016), 'P3': np.float64(-0.066)}
+H2lab {'P1': np.float64(-0.064), 'P2': np.float64(-0.019), 'P3': np.float64(0.015)}
+
+=== H4 variance
+  component  eta_squared  n_levels
+0    signal     0.168388         9
+1  protocol     0.024163         3
+2     model     0.011453         4
+3   dataset     0.280595         4
+
+=== H5 conformal alpha=0.10
+n cells total 48 feasible (finite thr, n_sel>0) 35
+mean diff -0.025 {'P1': np.float64(-0.02), 'P2': np.float64(0.022), 'P3': np.float64(-0.071)}
+more 8 less 22 same 5
+risk>0.10 triple 0.486 scalar 0.543
+SE - scalar coverage 0.081 up 16 down 13
+thresholds distribution check: n nonfinite triple 9 scalar 6
+
+=== Protocol movement of s_TIF_lr AUROC within model x dataset (max-min)
+dataset           chaosnli  nqopen   sciq  triviaqa
+model                                              
+claude-haiku-4.5     0.098   0.069  0.049     0.035
+gemini-2.5-flash     0.056   0.225  0.104     0.094
+gpt-4o-mini          0.069   0.107  0.057     0.061
+llama-3.1-8b         0.058   0.133  0.182     0.210
+
+=== Effective dimensionality: |AUROC(s_TIF_lr) - AUROC(s_TF)|
+share <0.01 0.562 median 0.0063 n 48
+
+=== Parse rates of preregistered elicited arms (metrics parse_rate, test split)
+n 144 >=0.90: 141
+                model   dataset protocol             signal  parse_rate
+21   claude-haiku-4.5  chaosnli       P3             p_true       0.833
+36   claude-haiku-4.5    nqopen       P2  verbalized_scalar       0.878
+357      llama-3.1-8b      sciq       P3             p_true       0.880
+label arm <0.90: [['llama-3.1-8b', 'sciq', 'P3', 0.84]]
+
+=== Raw data: refusals, error rates, logprob availability, I shares
+valid item-cells 4800 raw rows 7457 error rows 2657
+refusal by dataset % {'chaosnli': 0.0, 'nqopen': 16.3, 'sciq': 0.8, 'triviaqa': 4.2}
+refusal by model % {'claude-haiku-4.5': 5.9, 'gemini-2.5-flash': 4.3, 'gpt-4o-mini': 5.5, 'llama-3.1-8b': 5.5}
+error rate by dataset {'chaosnli': 0.308, 'nqopen': 0.625, 'sciq': 0.048, 'triviaqa': 0.225}
+dataset           chaosnli  nqopen   sciq  triviaqa
+model                                              
+claude-haiku-4.5     0.233   0.645  0.040     0.186
+gemini-2.5-flash     0.277   0.531  0.037     0.153
+gpt-4o-mini          0.280   0.610  0.047     0.203
+llama-3.1-8b         0.443   0.715  0.067     0.363
+dataset           chaosnli  nqopen  sciq  triviaqa
+model                                             
+claude-haiku-4.5       0.0    18.3   0.3       5.0
+gemini-2.5-flash       0.0    13.3   2.0       2.0
+gpt-4o-mini            0.0    18.0   0.7       3.3
+llama-3.1-8b           0.0    15.7   0.0       6.3
+logprob available share by model {'claude-haiku-4.5': 0.0, 'gemini-2.5-flash': 0.0, 'gpt-4o-mini': 1.0, 'llama-3.1-8b': 0.297}
+share I>T by model x dataset x protocol
+                            IgtT_P1   IgtT_P2   IgtT_P3
+model            dataset                               
+claude-haiku-4.5 chaosnli  0.023333       0.1  0.416667
+                 nqopen    0.122449  0.155844   0.02449
+                 sciq      0.033445    0.0301  0.020067
+                 triviaqa  0.101754  0.059649  0.031579
+gemini-2.5-flash chaosnli  0.003333  0.016722  0.543333
+                 nqopen    0.038462  0.084942  0.338462
+                 sciq      0.010381  0.003484  0.135889
+                 triviaqa  0.010204  0.057823   0.14966
+gpt-4o-mini      chaosnli  0.426667      0.42  0.363333
+                 nqopen    0.056911  0.069106  0.016327
+                 sciq      0.010067  0.013423  0.003356
+                 triviaqa  0.058621  0.048276       0.0
+llama-3.1-8b     chaosnli  0.163333      0.13  0.169492
+                 nqopen    0.047431  0.177866  0.031873
+                 sciq           0.0  0.026667  0.014388
+                 triviaqa  0.046263  0.131673  0.014235
+share I>=0.5 on chaosnli
+                  Ige05_P1  Ige05_P2  Ige05_P3
+model                                         
+claude-haiku-4.5  0.006667  0.033333      0.63
+gemini-2.5-flash  0.013333  0.020067  0.273333
+gpt-4o-mini       0.353333  0.313333  0.396667
+llama-3.1-8b          0.13  0.136667  0.128814
+columns ['prompt_version', 'model', 'model_id', 'dataset', 'item_id', 'question', 'golds', 'answer', 'refusal', 'y_incorrect', 'seq_logprob', 'tif_P1_raw', 'tif_P1', 'tif_P2_raw', 'tif_P2', 'tif_P3_raw', 'tif_P3', 'scalar_P1_raw', 'scalar_P1', 'scalar_P2_raw', 'scalar_P2', 'scalar_P3_raw', 'scalar_P3', 'ptrue_P1_raw', 'ptrue_P1', 'ptrue_P2_raw', 'ptrue_P2', 'ptrue_P3_raw', 'ptrue_P3', 'samples', 'semantic_entropy', 'error', 'tif_label_P1_raw', 'tif_label_P1', 'tif_label_P2_raw', 'tif_label_P2', 'tif_label_P3_raw', 'tif_label_P3']
+
+=== H4 literal (elicited preregistered signals): protocol range vs between-signal |diff| at fixed protocol
+mean protocol range 0.103 mean between-signal |diff| 0.059 cells with range<diff 1 of 16
+marginal eta2 (elicited only) {'signal': np.float64(0.03), 'protocol': np.float64(0.029), 'model': np.float64(0.035), 'dataset': np.float64(0.442)}
+
+=== H1 excluding the 3 cells with parse rate < 0.90
+H1 mean -0.0087 n 45
+
+=== Effective test n per dataset (s_TIF_lr, verbalized_scalar)
+                            min  max
+signal            dataset           
+s_TIF_lr          chaosnli  147  150
+                  nqopen    112  130
+                  sciq      140  150
+                  triviaqa  141  147
+verbalized_scalar chaosnli  149  150
+                  nqopen    108  130
+                  sciq      143  150
+                  triviaqa  140  147
+
+=== v2 contrasts (per-protocol means, sig+/sig-, by dataset)
+H1 n 48 mean -0.0103 {'P1': np.float64(-0.011), 'P2': np.float64(-0.011), 'P3': np.float64(-0.01)} sig+ 2 sig- 6 by ds {'chaosnli': 0.028, 'nqopen': -0.041, 'sciq': -0.033, 'triviaqa': 0.005}
+H2 n 48 mean 0.0028 {'P1': np.float64(-0.007), 'P2': np.float64(-0.003), 'P3': np.float64(0.019)} sig+ 4 sig- 3 by ds {'chaosnli': 0.004, 'nqopen': -0.009, 'sciq': 0.013, 'triviaqa': 0.003}
+H2n n 48 mean 0.0075 {'P1': np.float64(0.005), 'P2': np.float64(-0.003), 'P3': np.float64(0.02)} sig+ 4 sig- 3 by ds {'chaosnli': -0.005, 'nqopen': 0.009, 'sciq': 0.013, 'triviaqa': 0.012}
+H3_vs_s_TIF_lr n 48 mean 0.0786 {'P1': np.float64(0.096), 'P2': np.float64(0.043), 'P3': np.float64(0.097)} sig+ 22 sig- 3 by ds {'chaosnli': -0.0, 'nqopen': 0.208, 'sciq': -0.006, 'triviaqa': 0.113}
+H3_vs_s_TIF_fixed n 48 mean 0.0787 {'P1': np.float64(0.09), 'P2': np.float64(0.046), 'P3': np.float64(0.1)} sig+ 24 sig- 4 by ds {'chaosnli': 0.004, 'nqopen': 0.195, 'sciq': 0.002, 'triviaqa': 0.114}
+H3_vs_s_TF n 48 mean 0.0814 {'P1': np.float64(0.089), 'P2': np.float64(0.04), 'P3': np.float64(0.116)} sig+ 23 sig- 3 by ds {'chaosnli': 0.004, 'nqopen': 0.199, 'sciq': 0.007, 'triviaqa': 0.116}
+H3_vs_verbalized_scalar n 48 mean 0.0675 {'P1': np.float64(0.086), 'P2': np.float64(0.032), 'P3': np.float64(0.084)} sig+ 19 sig- 4 by ds {'chaosnli': 0.027, 'nqopen': 0.167, 'sciq': -0.042, 'triviaqa': 0.117}
+H3_vs_p_true n 48 mean 0.1189 {'P1': np.float64(0.129), 'P2': np.float64(0.141), 'P3': np.float64(0.086)} sig+ 29 sig- 0 by ds {'chaosnli': 0.026, 'nqopen': 0.193, 'sciq': 0.073, 'triviaqa': 0.184}
+LP_vs_SE n 24 mean 0.0366 {'P1': np.float64(0.037), 'P2': np.float64(0.037), 'P3': np.float64(0.037)} sig+ 3 sig- 0 by ds {'chaosnli': 0.021, 'nqopen': 0.02, 'sciq': 0.106, 'triviaqa': -0.001}
+LP_vs_scalar n 24 mean 0.1091 {'P1': np.float64(0.11), 'P2': np.float64(0.101), 'P3': np.float64(0.116)} sig+ 7 sig- 0 by ds {'chaosnli': 0.082, 'nqopen': 0.197, 'sciq': 0.042, 'triviaqa': 0.115}
+H3 on generation, min over elicited signals of mean delta: 0.142 {'H3_vs_p_true': 0.188, 'H3_vs_s_TF': 0.157, 'H3_vs_s_TIF_fixed': 0.155, 'H3_vs_s_TIF_lr': 0.161, 'H3_vs_verbalized_scalar': 0.142}
+
+=== v2 H5: tie-aware thresholds, alpha=0.10
+calibration risk above alpha in any cell/signal: 0
+finite thresholds per signal (of 48): {'p_true': 14, 's_TF': 23, 's_TF_lr': 24, 's_TIF_fixed': 23, 's_TIF_lr': 26, 'semantic_entropy': 24, 'seq_logprob': 18, 'verbalized_scalar': 24}
+cells 22 mean diff 0.032 {'P1': np.float64(0.026), 'P2': np.float64(0.047), 'P3': np.float64(0.024)} more 9 less 8 same 5
+mean coverage triple 0.756 scalar 0.724
+test risk > 0.10: triple 0.273 scalar 0.136
+SE vs scalar: cells 18 mean 0.088 up 8 down 4
+
+=== v2 pooled means with hierarchical (item-cluster) bootstrap
+        set contrast  pooled_mean   ci_lo   ci_hi  n_boot
+0     all48       H1      -0.0103 -0.0302  0.0091    1000
+1     all48       H2       0.0028 -0.0048  0.0116    1000
+2     all48      H2n       0.0075  0.0012  0.0143    1000
+3  noSciQ36       H1      -0.0028 -0.0238  0.0175    1000
+4  noSciQ36       H2      -0.0007 -0.0096  0.0082    1000
+5  noSciQ36      H2n       0.0055 -0.0010  0.0123    1000
+
+=== v2 split sensitivity (50 alternative splits)
+       H1_pooled  H2n_pooled
+count    50.0000     50.0000
+mean     -0.0032      0.0052
+std       0.0092      0.0035
+min      -0.0282     -0.0053
+25%      -0.0085      0.0032
+50%      -0.0031      0.0054
+75%       0.0023      0.0075
+max       0.0203      0.0114
+share H1>0 0.34 share H2n>0 0.92
+
+=== v2 incomplete item-cells
+item-cells with any internal failure (elicited error or <10 valid samples): 57 of 4545 non-refused
+H1 pooled mean excluding incomplete test items: -0.0119
+H2 pooled mean excluding incomplete test items: +0.0023
+H2n pooled mean excluding incomplete test items: +0.0070
+H3 pooled mean excluding incomplete test items: +0.0796
+
+=== Appendix: secondary metrics (mean over cells with a value)
+                   auroc  auprc  brier    ece   aurc  acc@cov0.9  acc@cov0.8  acc@cov0.5
+signal                                                                                  
+s_TIF_lr           0.664  0.424  0.162  0.072  0.238       0.722       0.732       0.762
+s_TIF_fixed        0.664  0.424  0.161  0.069  0.236       0.722       0.733       0.763
+s_TF               0.661  0.419  0.160  0.067  0.239       0.722       0.732       0.760
+verbalized_scalar  0.675  0.427  0.158  0.059  0.236       0.724       0.737       0.760
+p_true             0.623  0.380  0.159  0.057  0.255       0.721       0.736       0.749
+seq_logprob        0.796  0.666  0.136  0.074  0.198       0.682       0.709       0.792
+semantic_entropy   0.744  0.580  0.134  0.065  0.200       0.743       0.768       0.814
+AUROC on the 8 log-prob cells: {'p_true': 0.62, 's_TF': 0.644, 's_TIF_fixed': 0.644, 's_TIF_lr': 0.648, 'semantic_entropy': 0.751, 'seq_logprob': 0.796, 'verbalized_scalar': 0.67}
+
+=== ChaosNLI partial Spearman (rank-based, permutation p) -- from results/chaosnli_c_v2.log
+[B] Does the constructed triple add to sample entropy for AMBIGUITY? (partial Spearman of Ic, Fc given Hc)
+  claude-haiku-4.5 Ic | Hc : constant, not estimable
+  claude-haiku-4.5 Fc | Hc : rho_partial=-0.060 p_perm=0.341
+  claude-haiku-4.5 Tc | Hc : rho_partial=+0.060 p_perm=0.335
+  gemini-2.5-flash Ic | Hc : rho_partial=+0.036 p_perm=0.55
+  gemini-2.5-flash Fc | Hc : rho_partial=-0.006 p_perm=0.926
+  gemini-2.5-flash Tc | Hc : rho_partial=-0.004 p_perm=0.952
+  gpt-4o-mini      Ic | Hc : rho_partial=-0.022 p_perm=0.722
+  gpt-4o-mini      Fc | Hc : rho_partial=+0.055 p_perm=0.353
+  gpt-4o-mini      Tc | Hc : rho_partial=-0.063 p_perm=0.29
+  llama-3.1-8b     Ic | Hc : rho_partial=+0.163 p_perm=0.0032
+  llama-3.1-8b     Fc | Hc : rho_partial=-0.073 p_perm=0.207
+  llama-3.1-8b     Tc | Hc : rho_partial=+0.032 p_perm=0.576
+
+
+
+=== Extra analyses (collapse, TOST, ChaosNLI control) -- results_extra/extra_summary.txt
+== (a) dimensional collapse (48 model x dataset x protocol cells)
+rho_T_F: median -0.826  IQR [-0.886, -0.677]  min -0.987  max -0.253  n 48
+rho_T_scalar: median 0.551  IQR [0.368, 0.632]  min -0.216  max 0.874  n 48
+rho_F_scalar: median -0.445  IQR [-0.575, -0.249]  min -0.871  max 0.357  n 48
+rho_T_I: median -0.836  IQR [-0.904, -0.341]  min -0.974  max 0.348  n 48
+rho_I_F: median 0.434  IQR [0.172, 0.664]  min -0.630  max 0.873  n 48
+rho_I_scalar: median -0.457  IQR [-0.642, -0.253]  min -0.835  max 0.008  n 48
+pc1_share: median 0.713  IQR [0.649, 0.753]  min 0.485  max 0.852  n 48
+mean_abs_F_minus_1mT: median 0.091  IQR [0.049, 0.170]  min 0.012  max 0.357  n 48
+share_F_eq_1mT_005: median 0.533  IQR [0.237, 0.732]  min 0.030  max 0.963  n 48
+share_I_zero: median 0.365  IQR [0.109, 0.694]  min 0.000  max 0.983  n 48
+  P1: median pc1 0.748; median rho_T_F -0.849; median rho_T_scalar 0.551; median share I=0 0.358
+  P2: median pc1 0.740; median rho_T_F -0.768; median rho_T_scalar 0.578; median share I=0 0.309
+  P3: median pc1 0.644; median rho_T_F -0.804; median rho_T_scalar 0.432; median share I=0 0.458
+cells with pc1_share >= 0.80: 6 of 48; >= 0.67: 34
+cells with |rho_T_F| >= 0.8: 25; with rho_T_scalar >= 0.8: 3
+== (c) ChaosNLI positive control: does elicited I track human label entropy better than the scalar?
+claude-haiku-4.5  P1: rho(I,H) +0.309  rho(1-scalar,H) +0.415  diff -0.106 [-0.190, -0.026]  partial(I,H|scalar) +0.017 [-0.105, +0.131]  AUROC ambiguous-half: I 0.669 scalar 0.702
+claude-haiku-4.5  P2: rho(I,H) +0.362  rho(1-scalar,H) +0.436  diff -0.074 [-0.150, -0.000]  partial(I,H|scalar) +0.037 [-0.081, +0.160]  AUROC ambiguous-half: I 0.685 scalar 0.728
+claude-haiku-4.5  P3: rho(I,H) +0.019  rho(1-scalar,H) +0.374  diff -0.354 [-0.504, -0.214]  partial(I,H|scalar) -0.070 [-0.187, +0.048]  AUROC ambiguous-half: I 0.548 scalar 0.695
+gemini-2.5-flash  P1: rho(I,H) +0.063  rho(1-scalar,H) +0.204  diff -0.141 [-0.260, -0.015]  partial(I,H|scalar) -0.004 [-0.117, +0.110]  AUROC ambiguous-half: I 0.516 scalar 0.585
+gemini-2.5-flash  P2: rho(I,H) +0.209  rho(1-scalar,H) +0.357  diff -0.147 [-0.269, -0.025]  partial(I,H|scalar) +0.069 [-0.044, +0.182]  AUROC ambiguous-half: I 0.603 scalar 0.674
+gemini-2.5-flash  P3: rho(I,H) +0.038  rho(1-scalar,H) +0.078  diff -0.040 [-0.169, +0.092]  partial(I,H|scalar) +0.010 [-0.103, +0.126]  AUROC ambiguous-half: I 0.559 scalar 0.550
+gpt-4o-mini       P1: rho(I,H) -0.006  rho(1-scalar,H) -0.010  diff +0.004 [-0.083, +0.094]  partial(I,H|scalar) +0.002 [-0.115, +0.119]  AUROC ambiguous-half: I 0.529 scalar 0.522
+gpt-4o-mini       P2: rho(I,H) -0.180  rho(1-scalar,H) +0.024  diff -0.204 [-0.282, -0.126]  partial(I,H|scalar) -0.279 [-0.383, -0.173]  AUROC ambiguous-half: I 0.428 scalar 0.552
+gpt-4o-mini       P3: rho(I,H) -0.171  rho(1-scalar,H) -0.043  diff -0.128 [-0.228, -0.025]  partial(I,H|scalar) -0.192 [-0.311, -0.062]  AUROC ambiguous-half: I 0.438 scalar 0.501
+llama-3.1-8b      P1: rho(I,H) +0.071  rho(1-scalar,H) +0.009  diff +0.063 [-0.059, +0.185]  partial(I,H|scalar) +0.076 [-0.038, +0.186]  AUROC ambiguous-half: I 0.527 scalar 0.518
+llama-3.1-8b      P2: rho(I,H) +0.082  rho(1-scalar,H) +0.106  diff -0.023 [-0.173, +0.120]  partial(I,H|scalar) +0.065 [-0.055, +0.174]  AUROC ambiguous-half: I 0.520 scalar 0.530
+llama-3.1-8b      P3: rho(I,H) +0.097  rho(1-scalar,H) -0.004  diff +0.100 [-0.053, +0.249]  partial(I,H|scalar) +0.099 [-0.018, +0.212]  AUROC ambiguous-half: I 0.539 scalar 0.497
+cells (model x protocol) where diff CI is entirely > 0: 0; entirely < 0: 7; of 12
+cells where partial(I,H|scalar) CI excludes 0 (positive): 0; negative: 2
+mean AUROC for ambiguous half: I 0.547, scalar 0.588
+== (b) TOST, fitted triple - scalar, pooled AUROC difference (item-cluster bootstrap)
+all48 margin 0.02: pooled -0.0103, 90% CI [-0.0277, +0.0053], bootstrap p(<=-m) 0.181, p(>=+m) 0.001, equivalent=False
+all48 margin 0.03: pooled -0.0103, 90% CI [-0.0277, +0.0053], bootstrap p(<=-m) 0.028, p(>=+m) 0.000, equivalent=True
+noSciQ36 margin 0.02: pooled -0.0028, 90% CI [-0.0205, +0.0148], bootstrap p(<=-m) 0.057, p(>=+m) 0.018, equivalent=False
+noSciQ36 margin 0.03: pooled -0.0028, 90% CI [-0.0205, +0.0148], bootstrap p(<=-m) 0.004, p(>=+m) 0.001, equivalent=True

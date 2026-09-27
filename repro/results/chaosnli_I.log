@@ -1,0 +1,54 @@
+
+=== claude-haiku-4.5  n=300  error rate=0.233  refusals=0.0%
+  Spearman with HUMAN entropy (target = ambiguity, not error):
+    P1: rho(I,H)=+0.309  rho(T,H)=-0.374  rho(1-scalar,H)=+0.415  parse=100%   dims: I>T 2.3% | F>T 1.7% | I>=0.5 0.7% | I median 0.10
+        clear     n=148 err=0.07  AUROC(error): I=0.785  F-T=0.806  1-scalar=0.782
+        ambiguous n=152 err=0.39  AUROC(error): I=0.552  F-T=0.583  1-scalar=0.504
+    P2: rho(I,H)=+0.362  rho(T,H)=-0.414  rho(1-scalar,H)=+0.436  parse=100%   dims: I>T 10.0% | F>T 8.0% | I>=0.5 3.3% | I median 0.06
+        clear     n=148 err=0.07  AUROC(error): I=0.847  F-T=0.797  1-scalar=0.858
+        ambiguous n=152 err=0.39  AUROC(error): I=0.577  F-T=0.564  1-scalar=0.563
+    P3: rho(I,H)=+0.019  rho(T,H)=-0.331  rho(1-scalar,H)=+0.374  parse=100%   dims: I>T 41.7% | F>T 18.3% | I>=0.5 63.0% | I median 0.50
+        clear     n=148 err=0.07  AUROC(error): I=0.590  F-T=0.748  1-scalar=0.666
+        ambiguous n=152 err=0.39  AUROC(error): I=0.512  F-T=0.492  1-scalar=0.578
+  semantic entropy: rho(SE,H)=+0.182
+
+=== gemini-2.5-flash  n=300  error rate=0.277  refusals=0.0%
+  Spearman with HUMAN entropy (target = ambiguity, not error):
+    P1: rho(I,H)=+0.063  rho(T,H)=-0.103  rho(1-scalar,H)=+0.204  parse=100%   dims: I>T 0.3% | F>T 1.0% | I>=0.5 1.3% | I median 0.00
+        clear     n=148 err=0.14  AUROC(error): I=0.504  F-T=0.505  1-scalar=0.555
+        ambiguous n=152 err=0.41  AUROC(error): I=0.519  F-T=0.531  1-scalar=0.525
+    P2: rho(I,H)=+0.209  rho(T,H)=-0.221  rho(1-scalar,H)=+0.357  parse=100%   dims: I>T 1.7% | F>T 1.0% | I>=0.5 2.0% | I median 0.00
+        clear     n=148 err=0.14  AUROC(error): I=0.646  F-T=0.645  1-scalar=0.659
+        ambiguous n=151 err=0.41  AUROC(error): I=0.558  F-T=0.578  1-scalar=0.497
+    P3: rho(I,H)=+0.038  rho(T,H)=-0.131  rho(1-scalar,H)=+0.078  parse=99%   dims: I>T 54.3% | F>T 53.3% | I>=0.5 27.3% | I median 0.30
+        clear     n=148 err=0.14  AUROC(error): I=0.405  F-T=0.614  1-scalar=0.497
+        ambiguous n=149 err=0.40  AUROC(error): I=0.500  F-T=0.489  1-scalar=0.524
+  semantic entropy: rho(SE,H)=+0.272
+
+=== gpt-4o-mini  n=300  error rate=0.280  refusals=0.0%
+  Spearman with HUMAN entropy (target = ambiguity, not error):
+    P1: rho(I,H)=-0.006  rho(T,H)=-0.317  rho(1-scalar,H)=-0.010  parse=100%   dims: I>T 42.7% | F>T 36.0% | I>=0.5 35.3% | I median 0.20
+        clear     n=148 err=0.09  AUROC(error): I=0.525  F-T=0.552  1-scalar=0.425
+        ambiguous n=152 err=0.47  AUROC(error): I=0.505  F-T=0.610  1-scalar=0.423
+    P2: rho(I,H)=-0.180  rho(T,H)=-0.153  rho(1-scalar,H)=+0.024  parse=100%   dims: I>T 42.0% | F>T 23.0% | I>=0.5 31.3% | I median 0.10
+        clear     n=148 err=0.09  AUROC(error): I=0.546  F-T=0.607  1-scalar=0.526
+        ambiguous n=152 err=0.47  AUROC(error): I=0.458  F-T=0.499  1-scalar=0.423
+    P3: rho(I,H)=-0.171  rho(T,H)=-0.156  rho(1-scalar,H)=-0.043  parse=99%   dims: I>T 36.3% | F>T 24.3% | I>=0.5 39.7% | I median 0.30
+        clear     n=147 err=0.09  AUROC(error): I=0.398  F-T=0.589  1-scalar=0.496
+        ambiguous n=150 err=0.47  AUROC(error): I=0.419  F-T=0.567  1-scalar=0.467
+  semantic entropy: rho(SE,H)=+0.221
+  -logprob:         rho(-lp,H)=+0.151
+
+=== llama-3.1-8b  n=300  error rate=0.443  refusals=0.0%
+  Spearman with HUMAN entropy (target = ambiguity, not error):
+    P1: rho(I,H)=+0.071  rho(T,H)=-0.089  rho(1-scalar,H)=+0.009  parse=100%   dims: I>T 16.3% | F>T 11.0% | I>=0.5 13.0% | I median 0.10
+        clear     n=148 err=0.39  AUROC(error): I=0.580  F-T=0.538  1-scalar=0.529
+        ambiguous n=152 err=0.50  AUROC(error): I=0.489  F-T=0.538  1-scalar=0.527
+    P2: rho(I,H)=+0.082  rho(T,H)=-0.114  rho(1-scalar,H)=+0.106  parse=100%   dims: I>T 13.0% | F>T 2.3% | I>=0.5 13.7% | I median 0.20
+        clear     n=148 err=0.39  AUROC(error): I=0.590  F-T=0.592  1-scalar=0.522
+        ambiguous n=152 err=0.50  AUROC(error): I=0.520  F-T=0.515  1-scalar=0.507
+    P3: rho(I,H)=+0.097  rho(T,H)=+0.043  rho(1-scalar,H)=-0.004  parse=98%   dims: I>T 16.7% | F>T 4.7% | I>=0.5 12.7% | I median 0.30
+        clear     n=147 err=0.39  AUROC(error): I=0.562  F-T=0.560  1-scalar=0.551
+        ambiguous n=148 err=0.49  AUROC(error): I=0.513  F-T=0.472  1-scalar=0.517
+  semantic entropy: rho(SE,H)=+0.314
+  -logprob:         rho(-lp,H)=+0.289

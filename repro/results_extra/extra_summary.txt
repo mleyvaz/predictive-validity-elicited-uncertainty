@@ -1,0 +1,37 @@
+== (a) dimensional collapse (48 model x dataset x protocol cells)
+rho_T_F: median -0.826  IQR [-0.886, -0.677]  min -0.987  max -0.253  n 48
+rho_T_scalar: median 0.551  IQR [0.368, 0.632]  min -0.216  max 0.874  n 48
+rho_F_scalar: median -0.445  IQR [-0.575, -0.249]  min -0.871  max 0.357  n 48
+rho_T_I: median -0.836  IQR [-0.904, -0.341]  min -0.974  max 0.348  n 48
+rho_I_F: median 0.434  IQR [0.172, 0.664]  min -0.630  max 0.873  n 48
+rho_I_scalar: median -0.457  IQR [-0.642, -0.253]  min -0.835  max 0.008  n 48
+pc1_share: median 0.713  IQR [0.649, 0.753]  min 0.485  max 0.852  n 48
+mean_abs_F_minus_1mT: median 0.091  IQR [0.049, 0.170]  min 0.012  max 0.357  n 48
+share_F_eq_1mT_005: median 0.533  IQR [0.237, 0.732]  min 0.030  max 0.963  n 48
+share_I_zero: median 0.365  IQR [0.109, 0.694]  min 0.000  max 0.983  n 48
+  P1: median pc1 0.748; median rho_T_F -0.849; median rho_T_scalar 0.551; median share I=0 0.358
+  P2: median pc1 0.740; median rho_T_F -0.768; median rho_T_scalar 0.578; median share I=0 0.309
+  P3: median pc1 0.644; median rho_T_F -0.804; median rho_T_scalar 0.432; median share I=0 0.458
+cells with pc1_share >= 0.80: 6 of 48; >= 0.67: 34
+cells with |rho_T_F| >= 0.8: 25; with rho_T_scalar >= 0.8: 3
+== (c) ChaosNLI positive control: does elicited I track human label entropy better than the scalar?
+claude-haiku-4.5  P1: rho(I,H) +0.309  rho(1-scalar,H) +0.415  diff -0.106 [-0.190, -0.026]  partial(I,H|scalar) +0.017 [-0.105, +0.131]  AUROC ambiguous-half: I 0.669 scalar 0.702
+claude-haiku-4.5  P2: rho(I,H) +0.362  rho(1-scalar,H) +0.436  diff -0.074 [-0.150, -0.000]  partial(I,H|scalar) +0.037 [-0.081, +0.160]  AUROC ambiguous-half: I 0.685 scalar 0.728
+claude-haiku-4.5  P3: rho(I,H) +0.019  rho(1-scalar,H) +0.374  diff -0.354 [-0.504, -0.214]  partial(I,H|scalar) -0.070 [-0.187, +0.048]  AUROC ambiguous-half: I 0.548 scalar 0.695
+gemini-2.5-flash  P1: rho(I,H) +0.063  rho(1-scalar,H) +0.204  diff -0.141 [-0.260, -0.015]  partial(I,H|scalar) -0.004 [-0.117, +0.110]  AUROC ambiguous-half: I 0.516 scalar 0.585
+gemini-2.5-flash  P2: rho(I,H) +0.209  rho(1-scalar,H) +0.357  diff -0.147 [-0.269, -0.025]  partial(I,H|scalar) +0.069 [-0.044, +0.182]  AUROC ambiguous-half: I 0.603 scalar 0.674
+gemini-2.5-flash  P3: rho(I,H) +0.038  rho(1-scalar,H) +0.078  diff -0.040 [-0.169, +0.092]  partial(I,H|scalar) +0.010 [-0.103, +0.126]  AUROC ambiguous-half: I 0.559 scalar 0.550
+gpt-4o-mini       P1: rho(I,H) -0.006  rho(1-scalar,H) -0.010  diff +0.004 [-0.083, +0.094]  partial(I,H|scalar) +0.002 [-0.115, +0.119]  AUROC ambiguous-half: I 0.529 scalar 0.522
+gpt-4o-mini       P2: rho(I,H) -0.180  rho(1-scalar,H) +0.024  diff -0.204 [-0.282, -0.126]  partial(I,H|scalar) -0.279 [-0.383, -0.173]  AUROC ambiguous-half: I 0.428 scalar 0.552
+gpt-4o-mini       P3: rho(I,H) -0.171  rho(1-scalar,H) -0.043  diff -0.128 [-0.228, -0.025]  partial(I,H|scalar) -0.192 [-0.311, -0.062]  AUROC ambiguous-half: I 0.438 scalar 0.501
+llama-3.1-8b      P1: rho(I,H) +0.071  rho(1-scalar,H) +0.009  diff +0.063 [-0.059, +0.185]  partial(I,H|scalar) +0.076 [-0.038, +0.186]  AUROC ambiguous-half: I 0.527 scalar 0.518
+llama-3.1-8b      P2: rho(I,H) +0.082  rho(1-scalar,H) +0.106  diff -0.023 [-0.173, +0.120]  partial(I,H|scalar) +0.065 [-0.055, +0.174]  AUROC ambiguous-half: I 0.520 scalar 0.530
+llama-3.1-8b      P3: rho(I,H) +0.097  rho(1-scalar,H) -0.004  diff +0.100 [-0.053, +0.249]  partial(I,H|scalar) +0.099 [-0.018, +0.212]  AUROC ambiguous-half: I 0.539 scalar 0.497
+cells (model x protocol) where diff CI is entirely > 0: 0; entirely < 0: 7; of 12
+cells where partial(I,H|scalar) CI excludes 0 (positive): 0; negative: 2
+mean AUROC for ambiguous half: I 0.547, scalar 0.588
+== (b) TOST, fitted triple - scalar, pooled AUROC difference (item-cluster bootstrap)
+all48 margin 0.02: pooled -0.0103, 90% CI [-0.0277, +0.0053], bootstrap p(<=-m) 0.181, p(>=+m) 0.001, equivalent=False
+all48 margin 0.03: pooled -0.0103, 90% CI [-0.0277, +0.0053], bootstrap p(<=-m) 0.028, p(>=+m) 0.000, equivalent=True
+noSciQ36 margin 0.02: pooled -0.0028, 90% CI [-0.0205, +0.0148], bootstrap p(<=-m) 0.057, p(>=+m) 0.018, equivalent=False
+noSciQ36 margin 0.03: pooled -0.0028, 90% CI [-0.0205, +0.0148], bootstrap p(<=-m) 0.004, p(>=+m) 0.001, equivalent=True

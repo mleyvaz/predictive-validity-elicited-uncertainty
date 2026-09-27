@@ -1,0 +1,5 @@
+item-cells with any internal failure (elicited error or <10 valid samples): 57 of 4545 non-refused
+H1 pooled mean excluding incomplete test items: -0.0119
+H2 pooled mean excluding incomplete test items: +0.0023
+H2n pooled mean excluding incomplete test items: +0.0070
+H3 pooled mean excluding incomplete test items: +0.0796

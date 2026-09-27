@@ -3,3 +3,6 @@ results/pilot_*.jsonl
 results/*.log
 data/_parquet/
 __pycache__/
+*.aux
+*.log
+!repro/results/*.log

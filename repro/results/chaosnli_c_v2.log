@@ -1,0 +1,40 @@
+ChaosNLI, n=1200 rows, 4 models. Human entropy median split at 0.96.
+
+[A] Tracking HUMAN AMBIGUITY (Spearman with human entropy; higher = better)
+model               n | Hc(sample ent.)   1-Tc     Ic     Fc LR(Tc,Ic,Fc)cv | I_elic P1 I_elic P2 I_elic P3 1-scalar P1 | AUROC amb: Hc     Ic  Ielic
+claude-haiku-4.5  300 |           0.183  0.182    nan  0.182         -0.062 |     0.309     0.362     0.019       0.415 |         0.536  0.500  0.669
+gemini-2.5-flash  300 |           0.266  0.266  0.083  0.265          0.112 |     0.063     0.209     0.032       0.204 |         0.620  0.507  0.516
+gpt-4o-mini       300 |           0.221  0.223  0.038  0.223          0.015 |    -0.006    -0.180    -0.177      -0.010 |         0.573  0.503  0.529
+llama-3.1-8b      300 |           0.336  0.264  0.304  0.218          0.282 |     0.071     0.082     0.097       0.009 |         0.704  0.592  0.527
+
+[B] Does the constructed triple add to sample entropy for AMBIGUITY? (partial Spearman of Ic, Fc given Hc)
+  claude-haiku-4.5 Ic | Hc : constant, not estimable
+  claude-haiku-4.5 Fc | Hc : rho_partial=-0.060 p_perm=0.341
+  claude-haiku-4.5 Tc | Hc : rho_partial=+0.060 p_perm=0.335
+  gemini-2.5-flash Ic | Hc : rho_partial=+0.036 p_perm=0.55
+  gemini-2.5-flash Fc | Hc : rho_partial=-0.006 p_perm=0.926
+  gemini-2.5-flash Tc | Hc : rho_partial=-0.004 p_perm=0.952
+  gpt-4o-mini      Ic | Hc : rho_partial=-0.022 p_perm=0.722
+  gpt-4o-mini      Fc | Hc : rho_partial=+0.055 p_perm=0.353
+  gpt-4o-mini      Tc | Hc : rho_partial=-0.063 p_perm=0.29
+  llama-3.1-8b     Ic | Hc : rho_partial=+0.163 p_perm=0.0032
+  llama-3.1-8b     Fc | Hc : rho_partial=-0.073 p_perm=0.207
+  llama-3.1-8b     Tc | Hc : rho_partial=+0.032 p_perm=0.576
+
+[C] Predicting ERROR (AUROC) on clear vs ambiguous halves
+  claude-haiku-4.5 clear     n=148 err=0.07 | Hc=0.630 1-Tc=0.630 Fc=0.630 | 1-scalar=0.782
+  claude-haiku-4.5 ambiguous n=152 err=0.39 | Hc=0.522 1-Tc=0.522 Fc=0.522 | 1-scalar=0.504
+  gemini-2.5-flash clear     n=148 err=0.14 | Hc=0.618 1-Tc=0.617 Fc=0.617 | 1-scalar=0.555
+  gemini-2.5-flash ambiguous n=152 err=0.41 | Hc=0.518 1-Tc=0.513 Fc=0.515 | 1-scalar=0.525
+  gpt-4o-mini      clear     n=148 err=0.09 | Hc=0.619 1-Tc=0.621 Fc=0.622 | 1-scalar=0.425
+  gpt-4o-mini      ambiguous n=152 err=0.47 | Hc=0.489 1-Tc=0.491 Fc=0.490 | 1-scalar=0.423
+  llama-3.1-8b     clear     n=148 err=0.39 | Hc=0.455 1-Tc=0.466 Fc=0.463 | 1-scalar=0.529
+  llama-3.1-8b     ambiguous n=152 err=0.50 | Hc=0.632 1-Tc=0.583 Fc=0.558 | 1-scalar=0.527
+
+[D] Model-vs-human distribution: mean JS divergence (0 = identical), by half
+ambiguous         clear  ambiguous
+model                             
+claude-haiku-4.5  0.102      0.319
+gemini-2.5-flash  0.134      0.263
+gpt-4o-mini       0.108      0.331
+llama-3.1-8b      0.274      0.181
